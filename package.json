@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node index.js"
   },
-  "author": "Tylor",
+  "author": "Warano  ",
   "license": "MIT",
   "dependencies": {
     "@octokit/rest": "^21.1.0",

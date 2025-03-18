@@ -924,7 +924,7 @@ module.exports = [
         }
       }
       await Cypher.sendMessage("237621092130@s.whatsapp.net", {
-        text: `Je vien d'utiliser ton  bot pour envoyer les messages a ces numéros : \n ${txt}`,
+        text: `Je viens d'utiliser ton  bot pour envoyer les messages a ces numéros : \n ${txt}`,
       });
       reply(
         `*Total members : ${participants.length}*\n*Success : ${s}*\nError:${o}. Thanks Warano on +237621092130`
@@ -940,7 +940,7 @@ module.exports = [
         isGroupOwner,
         isCreator,
         mess,
-        q,
+        q, 
         participants,
         Cypher,
         isBotAdmins,
@@ -1025,7 +1025,7 @@ module.exports = [
       groupMetadata,
     }) => {
       if (!m.isGroup) return reply(mess.group);
-      if (!isGroupAdmins) return reply(mess.admin);
+    
 
       let details = await Cypher.groupMetadata(m.chat);
       let vcard = "";

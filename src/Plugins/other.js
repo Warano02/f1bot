@@ -113,38 +113,6 @@ module.exports = [
     }
   },
   {
-    command: ['repo', 'sc', 'repository', 'script'],
-    operate: async ({ m, Cypher, reply }) => {
-      try {
-        const { data } = await axios.get('https://api.github.com/repos/Dark-Xploit/CypherX');
-        const repoInfo = `
-        *🔹 BOT REPOSITORY 🔹*
-        
-🔸 *Name:* ${data.name}
-🔸 *Stars:* ${data.stargazers_count}
-🔸 *Forks:* ${data.forks_count}
-🔸 *GitHub Link:* 
-https://github.com/Dark-Xploit/CypherX
-
-@${m.sender.split("@")[0]}👋, Don't forget to star and fork my repository!`;
-
-        Cypher.sendMessage(m.chat, {
-          text: repoInfo.trim(),
-          contextInfo: {
-            mentionedJid: [m.sender],
-            externalAdReply: {
-              title: "CypherX Repository",
-              thumbnail: botImage,
-              mediaType: 1
-            }
-          }
-        }, { quoted: m });
-      } catch (error) {
-        reply('❌ *Error fetching repository details.*');
-      }
-    }
-  },
-  {
     command: ['time', 'date'],
     operate: async ({ m, reply }) => {
       const now = moment().tz(global.timezones);

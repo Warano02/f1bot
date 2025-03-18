@@ -35,35 +35,6 @@ module.exports = [
   }
 },
  {
-  command: ['calculate', 'calculator'],
-  operate: async ({ m, text, prefix, command, reply }) => {
-    try {
-      let result;
-
-      if (text.includes("+")) {
-        const [value_one, value_two] = text.split("+").map(Number);
-        result = value_one + value_two;
-      } else if (text.includes("-")) {
-        const [value_one, value_two] = text.split("-").map(Number);
-        result = value_one - value_two;
-      } else if (text.includes("×")) {
-        const [value_one, value_two] = text.split("×").map(Number);
-        result = value_one * value_two;
-      } else if (text.includes("÷")) {
-        const [value_one, value_two] = text.split("÷").map(Number);
-        result = value_one / value_two;
-      } else {
-        return reply(`*Enter a maths question, Example: ${prefix + command} 1 + 1\n\nAvailable options: +, -, ÷, ×*`);
-      }
-
-      reply(`${result}`);
-    } catch (error) {
-      console.error(error);
-      reply('*An error occurred during the calculation.*');
-    }
-  }
-},
- {
   command: ['emojimix', 'emix'],
   operate: async ({ m, text, prefix, command, Cypher, fetchJson, reply }) => {
     let [emoji1, emoji2] = text.split`+`;
@@ -224,7 +195,7 @@ console.log('Quoted Key:', m.quoted?.key);
 
     try {
       const ttsData = await googleTTS.getAllAudioBase64(text, {
-        lang: "en",
+        lang: "fr",
         slow: false,
         host: "https://translate.google.com",
         timeout: 10000,
