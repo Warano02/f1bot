@@ -4,3 +4,6 @@ session
 package-lock.json
 Dockerfile
 .vscode
+./src/database.json
+./src/store.json
+./src/badwords.json
