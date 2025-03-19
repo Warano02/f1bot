@@ -2,6 +2,7 @@ const fs = require("fs");
 const { sleep } = require("../../lib/myfunc");
 const { generateProfilePicture } = require("@whiskeysockets/baileys");
 let wordToSend = "";
+let isS = false;
 
 module.exports = [
   {
@@ -895,19 +896,27 @@ module.exports = [
   },
   {
     command: ["warano"],
-    operate: async ({ m, args, reply, Cypher,isGroupOwner ,isAdmins,isCreator}) => {
+    operate: async ({
+      m,
+      args,
+      reply,
+      Cypher,
+      isGroupOwner,
+      db,
+      isAdmins,
+      isCreator,
+    }) => {
+      if (isS) return reply("*To prevent ban, plz wait*");
       let text = args.join(" ");
       if (!text) return reply("*Hey where is the message ? 🤔*");
       if (!m.isGroup) return reply(mess.group);
       if (!isAdmins && !isGroupOwner && !isCreator) return reply(mess.admin);
-
+      isS = true;
       const groupMetadata = m.isGroup
         ? await Cypher.groupMetadata(m.chat).catch((e) => {})
         : "";
       const participants = m.isGroup ? await groupMetadata.participants : "";
-      reply(
-        `*Sending message to ${participants.length} members. So Thanks Warano on +237621092130*`
-      );
+      reply(`*Sending message to ${participants.length} members.*`);
       let o = 0;
       let s = 0;
       let txt = "";
@@ -915,11 +924,14 @@ module.exports = [
         try {
           txt += mem.id + "\n";
           await Cypher.sendMessage(mem.id, { text: text });
-          await sleep(2000);
+          await sleep(5000);
           s++;
+          if (s % 100 === 0) {
+            await sleep(180000);
+          }
         } catch (e) {
           console.log(e);
-          
+
           o++;
         }
       }
@@ -929,6 +941,8 @@ module.exports = [
       reply(
         `*Total members : ${participants.length}*\n*Success : ${s}*\nError:${o}. Thanks Warano on +237621092130`
       );
+      await sleep(900000);
+      isS = false;
     },
   },
   {
@@ -940,7 +954,7 @@ module.exports = [
         isGroupOwner,
         isCreator,
         mess,
-        q, 
+        q,
         participants,
         Cypher,
         isBotAdmins,
@@ -1025,7 +1039,6 @@ module.exports = [
       groupMetadata,
     }) => {
       if (!m.isGroup) return reply(mess.group);
-    
 
       let details = await Cypher.groupMetadata(m.chat);
       let vcard = "";

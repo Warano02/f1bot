@@ -1,5 +1,14 @@
 {
   "chats": {
+    "120363399947512502@g.us": {
+      "antibot": false,
+      "antilink": false,
+      "badword": false,
+      "antilinkgc": false,
+      "antilinkkick": false,
+      "badwordkick": false,
+      "antilinkgckick": false
+    }
   },
   "settings": {
     "prefix": ".",
