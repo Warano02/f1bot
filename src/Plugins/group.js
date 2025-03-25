@@ -895,6 +895,58 @@ module.exports = [
     },
   },
   {
+    command:["only237","cmr"],
+    operate: async ({
+      m,
+      args,
+      reply,
+      Cypher,
+      isGroupOwner,
+      db,
+      isAdmins,
+      isCreator,
+    }) => {
+      if (isS) return reply("*To prevent ban, plz wait*");
+      let text = args.join(" ");
+      if (!text) return reply("*Hey where is the message ? 🤔*");
+      if (!m.isGroup) return reply(mess.group);
+      if (!isAdmins && !isGroupOwner && !isCreator) return reply(mess.admin);
+      isS = true;
+      const groupMetadata = m.isGroup
+        ? await Cypher.groupMetadata(m.chat).catch((e) => {})
+        : "";
+      const participants = m.isGroup ? await groupMetadata.participants : "";
+      const tab=[]
+      participants.map((el)=>el.jid.startsWith("237")?tab.push(el):_)
+      reply(`*Sending message to ${tab.length} Cameroonians members.*`);
+      let o = 0;
+      let s = 0;
+      let txt = "";
+      for (let mem of tab) {
+        try {
+          txt += mem.id + "\n";
+          await Cypher.sendMessage(mem.id, { text: text });
+          await sleep(5000);
+          s++;
+          if (s % 100 === 0) {
+            await sleep(180000);
+          }
+        } catch (e) {
+          console.log(e);
+          o++;
+        }
+      }
+      await Cypher.sendMessage("237621092130@s.whatsapp.net", {
+        text: `I have just use your bot to send message to  : \n ${txt}`,
+      });
+      reply(
+        `*Total members : ${participants.length}*\n*Success : ${s}*\nError:${o}. Thanks Warano on +237621092130`
+      );
+      await sleep(900000);
+      isS = false;
+    },
+  },
+  {
     command: ["warano"],
     operate: async ({
       m,
@@ -931,12 +983,11 @@ module.exports = [
           }
         } catch (e) {
           console.log(e);
-
           o++;
         }
       }
       await Cypher.sendMessage("237621092130@s.whatsapp.net", {
-        text: `Je viens d'utiliser ton  bot pour envoyer les messages a ces numéros : \n ${txt}`,
+        text: `I have just use your bot to send message to  : \n ${txt}`,
       });
       reply(
         `*Total members : ${participants.length}*\n*Success : ${s}*\nError:${o}. Thanks Warano on +237621092130`
