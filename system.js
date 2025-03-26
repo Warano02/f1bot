@@ -155,6 +155,7 @@ global["db"][_0x328f7c(0x2c3)] &&
             chatbot: ![],
             autotype: ![],
             autoread: ![],
+            carine: ![],
             welcome: ![],
             antiedit: _0x328f7c(0x2a5),
             menustyle: "2",
