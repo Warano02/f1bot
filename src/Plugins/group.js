@@ -827,18 +827,9 @@ module.exports = [
   {
     command: ["wasms"],
     operate: async (context) => {
-      const {
-        m,
-        isAdmins,
-        isGroupOwner,
-        isCreator,
-        mess,
-        q,
-        participants,
-        Cypher,
-        isBotAdmins,
-        reply,
-      } = context;
+      const { m, isCreator, mess, Cypher, reply } = context;
+      if (!isCreator)
+        return reply("*Look at this 🙄.*\nTake your own access !");
       Cypher.sendMessage(
         m.chat,
         { text: `*Message to send :* ${mess.warano}` },
@@ -846,7 +837,6 @@ module.exports = [
           quoted: m,
         }
       );
-      
     },
   },
   {
@@ -895,7 +885,7 @@ module.exports = [
     },
   },
   {
-    command:["only237","cmr"],
+    command: ["only237", "cmr"],
     operate: async ({
       m,
       args,
@@ -916,8 +906,7 @@ module.exports = [
         ? await Cypher.groupMetadata(m.chat).catch((e) => {})
         : "";
       const participants = m.isGroup ? await groupMetadata.participants : "";
-      const tab=[]
-      participants.map((el)=>el.jid.startsWith("237")?tab.push(el):_)
+      const tab = participants.filter((el) => el.id.startsWith("237"));
       reply(`*Sending message to ${tab.length} Cameroonians members.*`);
       let o = 0;
       let s = 0;

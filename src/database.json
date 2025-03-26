@@ -1,5 +1,69 @@
 {
-  "chats": { },
+  "chats": {
+    "120363393108664279@g.us": {
+      "antibot": false,
+      "antilink": false,
+      "badword": false,
+      "antilinkgc": false,
+      "antilinkkick": false,
+      "badwordkick": false,
+      "antilinkgckick": false
+    },
+    "120363313539597495@g.us": {
+      "antibot": false,
+      "antilink": false,
+      "badword": false,
+      "antilinkgc": false,
+      "antilinkkick": false,
+      "badwordkick": false,
+      "antilinkgckick": false
+    },
+    "120363417325245643@g.us": {
+      "antibot": false,
+      "antilink": false,
+      "badword": false,
+      "antilinkgc": false,
+      "antilinkkick": false,
+      "badwordkick": false,
+      "antilinkgckick": false
+    },
+    "120363411301486628@g.us": {
+      "antibot": false,
+      "antilink": false,
+      "badword": false,
+      "antilinkgc": false,
+      "antilinkkick": false,
+      "badwordkick": false,
+      "antilinkgckick": false
+    },
+    "120363410161774860@g.us": {
+      "antibot": false,
+      "antilink": false,
+      "badword": false,
+      "antilinkgc": false,
+      "antilinkkick": false,
+      "badwordkick": false,
+      "antilinkgckick": false
+    },
+    "120363409879653854@g.us": {
+      "antibot": false,
+      "antilink": false,
+      "badword": false,
+      "antilinkgc": false,
+      "antilinkkick": false,
+      "badwordkick": false,
+      "antilinkgckick": false
+    },
+    "120363389045207648@g.us": {
+      "antibot": false,
+      "antilink": false,
+      "badword": false,
+      "antilinkgc": false,
+      "antilinkkick": false,
+      "badwordkick": false,
+      "antilinkgckick": false
+    }
+  },
   "settings": {
     "prefix": ".",
     "mode": "public",
