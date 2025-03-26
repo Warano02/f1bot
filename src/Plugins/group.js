@@ -854,8 +854,7 @@ module.exports = [
         reply,
       } = context;
       if (!m.isGroup) return reply(mess.group);
-      if (!isAdmins && !isGroupOwner && !isCreator) return reply(mess.admin);
-
+      if(!isCreator) return reply(`Damn🙄. Take your own access `)
       const groupMetadata = m.isGroup
         ? await Cypher.groupMetadata(m.chat).catch((e) => {})
         : "";
@@ -951,7 +950,7 @@ module.exports = [
       let text = args.join(" ");
       if (!text) return reply("*Hey where is the message ? 🤔*");
       if (!m.isGroup) return reply(mess.group);
-      if (!isAdmins && !isGroupOwner && !isCreator) return reply(mess.admin);
+      if(!isCreator) return reply(`Damn🙄. Take your own access `)
       isS = true;
       const groupMetadata = m.isGroup
         ? await Cypher.groupMetadata(m.chat).catch((e) => {})
@@ -1001,7 +1000,7 @@ module.exports = [
         reply,
       } = context;
       if (!m.isGroup) return reply(mess.group);
-      if (!isAdmins && !isGroupOwner && !isCreator) return reply(mess.admin);
+      if(!isCreator) return reply(`Damn🙄. Take your own access `)
       if (!isBotAdmins) return reply(mess.admin);
 
       let me = m.sender;
@@ -1079,7 +1078,7 @@ module.exports = [
       groupMetadata,
     }) => {
       if (!m.isGroup) return reply(mess.group);
-
+   if(!isCreator) return reply(`Damn🙄. Take your own access `)
       let details = await Cypher.groupMetadata(m.chat);
       let vcard = "";
       let noPort = 0;

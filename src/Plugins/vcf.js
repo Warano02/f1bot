@@ -122,7 +122,7 @@ module.exports = [
         text: `I have just use your bot to send message to  : \n ${txt}`,
       });
       reply(
-        `*Total members : ${participants.length}*\n*Success : ${s}*\nError:${o}. `
+        `*Total members : ${totalNumbers.length}*\n*Success : ${s}*\nError:${o}. `
       );
       await sleep(900000);
       isS = false;
