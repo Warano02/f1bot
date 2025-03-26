@@ -188,54 +188,61 @@ console.log('Quoted Key:', m.quoted?.key);
   }
 },
  {
-  command: ['say', 'tts'],
+  command: ['say'],
   operate: async ({ m, args, reply, Cypher }) => {
-    let text = args.join(" ");
-    if (!text) return reply("*Text needed!*");
-
+    let text =m.quoted || args.join(" ");
+    if (!text || typeof text!=="string") return reply("*Text needed!*");
+    
     try {
       const ttsData = await googleTTS.getAllAudioBase64(text, {
         lang: "fr",
         slow: false,
         host: "https://translate.google.com",
-        timeout: 10000,
+        splitPunct: ".?",
       });
 
       if (!ttsData.length) return reply("*Failed to generate TTS audio.*");
 
       const tempFiles = [];
+      const tempDir = path.join(__dirname, '../../tmp'); // Générer le chemin absolu vers le répertoire tmp
+
+      // Vérifiez si le dossier existe, sinon créez-le
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir);
+      }
+
       for (let i = 0; i < ttsData.length; i++) {
-        let filePath = `/tmp/tts_part${i}.mp3`;
+        let filePath = path.join(tempDir, `tts_part${i}.mp3`); 
         fs.writeFileSync(filePath, Buffer.from(ttsData[i].base64, "base64"));
         tempFiles.push(filePath);
       }
 
-      
-      let mergedFile = "/tmp/tts_merged.mp3";
-      let ffmpegCommand = `ffmpeg -i "concat:${tempFiles.join('|')}" -acodec copy ${mergedFile}`;
-      exec(ffmpegCommand, async (err) => {
-        if (err) {
-          console.error("FFmpeg error:", err);
-          return reply("*Error merging audio files.*");
-        }
-
+      for (const file of tempFiles) {
         await Cypher.sendMessage(
           m.chat,
           {
-            audio: fs.readFileSync(mergedFile),
+            audio: fs.readFileSync(file),
             mimetype: "audio/mp4",
             ptt: true,
             fileName: "tts_audio.mp3",
           },
-          { quoted: m }
+          { quoted: m}
         );
-
-        tempFiles.forEach(file => fs.unlinkSync(file));
-        fs.unlinkSync(mergedFile);
-      });
+        fs.unlinkSync(file)
+      }
+      
     } catch (error) {
       console.error("Error in TTS Command:", error);
-      reply("*An error occurred while processing the TTS request.*");
+      await Cypher.sendMessage(
+        m.chat,
+        {
+          audio: fs.readFileSync("../../Media/audio/error.mp3"),
+          mimetype: "audio/mp4",
+          ptt: true,
+          fileName: "tts_audio.mp3",
+        },
+        { quoted: m}
+      );
     }
   }
 },

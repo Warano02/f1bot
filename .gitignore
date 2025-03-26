@@ -3,6 +3,6 @@ node_modules
 session
 package-lock.json
 .vscode
-./src/database.json
-./src/store.json
-./src/badwords.json
+src/database.json
+src/store.json
+src/badwords.json

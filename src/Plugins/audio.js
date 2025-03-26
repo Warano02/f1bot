@@ -67,26 +67,5 @@ module.exports = [
       });
     }
   },
-  {
-    command: ['volaudio'],
-    operate: async ({ Cypher, m, reply, args, prefix, command }) => {
-      const quoted = m.quoted ? m.quoted : null;
-      const mime = quoted?.mimetype || "";
-
-      if (!args.length) return reply(`*Example: ${prefix + command} 10*`);
-      if (!quoted || !/audio/.test(mime)) return reply(`Reply to an *audio file* with *${prefix + command}* to adjust volume.`);
-
-      const mediaPath = await Cypher.downloadAndSaveMediaMessage(quoted);
-      const outputPath = getRandom('.mp3');
-
-      exec(`ffmpeg -i ${mediaPath} -filter:a volume=${args[0]} ${outputPath}`, (error) => {
-        fs.unlinkSync(mediaPath);
-        if (error) return reply("*Error!*");
-
-        const modifiedAudio = fs.readFileSync(outputPath);
-        Cypher.sendMessage(m.chat, { audio: modifiedAudio, mimetype: "audio/mp4", ptt: true }, { quoted: m });
-        fs.unlinkSync(outputPath);
-      });
-    }
-  }
+  
 ];

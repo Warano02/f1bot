@@ -30,7 +30,8 @@ global.wm = process.env.GL_WM || "©CypherX"
 global.assistant="Warano"
 
 global.mess = { 
-  done: '*Done*', 
+  done: '*Done*',
+  saveAs:"Scan",// Prefix that you wanna put before name in vcf 
   success: '©CypherX', 
   owner: `*You don't have permission to use this command!*`, 
   group: '*This feature becomes available when you use it in a group!*', 

@@ -44,6 +44,7 @@
     "performance-now": "^2.1.0",
     "pino": "^8.14.1",
     "steno": "^1.0.0",
+    "vcard-parser": "^1.0.0",
     "yargs": "^17.7.2",
     "yt-search": "^2.10.4"
   }
