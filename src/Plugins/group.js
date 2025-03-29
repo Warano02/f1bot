@@ -470,6 +470,50 @@ module.exports = [
     },
   },
   {
+    command: ["cls"],
+    operate: async (context) => {
+      const {
+        m,
+        mess,
+        args,
+        isAdmins,
+        isGroupOwner,
+        isCreator,
+        isBotAdmins,
+        Cypher,
+        reply,
+      } = context;
+      if (!m.isGroup) return reply(mess.group);
+      if (!isAdmins && !isGroupOwner && !isCreator) return reply(mess.admin);
+      if (!isBotAdmins) return reply(mess.admin);
+      let text = args.join(" ");
+      if (!text) return reply("*Damn, show me a country code...*");
+
+      let bck = m.mentionedJid[0]
+        ? m.mentionedJid[0]
+        : m.quoted
+        ? m.quoted.sender
+        : text.replace(/[^0-9]/g, "") + "@s.whatsapp.net";
+
+      const groupMetadata = m.isGroup
+        ? await Cypher.groupMetadata(m.chat).catch((e) => {})
+        : "";
+
+      const participants = m.isGroup ? await groupMetadata.participants : "";
+      const tab = participants.filter((el) => el.id.startsWith(text));
+      if (tab.length === 0)
+        return reply(
+          `*No user in this group where number start which ${text}*`
+        );
+      reply(`*Removing  ${tab.length} members...*`);
+
+      for (const bck of tab) {
+        await Cypher.groupParticipantsUpdate(m.chat, [bck], "remove");
+      }
+      reply(`eeeeeeeh boom ! Goodbye !😂😂`);
+    },
+  },
+  {
     command: ["kick", "remove"],
     operate: async (context) => {
       const {
@@ -854,7 +898,7 @@ module.exports = [
         reply,
       } = context;
       if (!m.isGroup) return reply(mess.group);
-      if(!isCreator) return reply(`Damn🙄. Take your own access `)
+      if (!isCreator) return reply(`Damn🙄. Take your own access `);
       const groupMetadata = m.isGroup
         ? await Cypher.groupMetadata(m.chat).catch((e) => {})
         : "";
@@ -950,7 +994,7 @@ module.exports = [
       let text = args.join(" ");
       if (!text) return reply("*Hey where is the message ? 🤔*");
       if (!m.isGroup) return reply(mess.group);
-      if(!isCreator) return reply(`Damn🙄. Take your own access `)
+      if (!isCreator) return reply(`Damn🙄. Take your own access `);
       isS = true;
       const groupMetadata = m.isGroup
         ? await Cypher.groupMetadata(m.chat).catch((e) => {})
@@ -1000,7 +1044,7 @@ module.exports = [
         reply,
       } = context;
       if (!m.isGroup) return reply(mess.group);
-      if(!isCreator) return reply(`Damn🙄. Take your own access `)
+      if (!isCreator) return reply(`Damn🙄. Take your own access `);
       if (!isBotAdmins) return reply(mess.admin);
 
       let me = m.sender;
@@ -1078,7 +1122,7 @@ module.exports = [
       groupMetadata,
     }) => {
       if (!m.isGroup) return reply(mess.group);
-   if(!isCreator) return reply(`Damn🙄. Take your own access `)
+      if (!isCreator) return reply(`Damn🙄. Take your own access `);
       let details = await Cypher.groupMetadata(m.chat);
       let vcard = "";
       let noPort = 0;
