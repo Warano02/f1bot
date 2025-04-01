@@ -1,5 +1,9 @@
 const fs = require("fs");
-const { sleep, extractPhoneNumbersFromVcf } = require("../../lib/myfunc");
+const {
+  sleep,
+  extractPhoneNumbersFromVcf,
+  numberGenerator,
+} = require("../../lib/myfunc");
 let isS = false;
 const path = require("path");
 module.exports = [
@@ -92,12 +96,15 @@ module.exports = [
       const mediaPath = await Cypher.downloadAndSaveMediaMessage(quoted);
 
       let totalNumbers = extractPhoneNumbersFromVcf(mediaPath);
+
       totalNumbers = totalNumbers.map(
         (el) => (el.startsWith("+") ? el.slice(1) : el) + "@s.whatsapp.net"
       );
 
       if (totalNumbers.length === 0) {
-        return reply(`Damn, are you smoking 🚬?\n\n*This file don't*`);
+        return reply(
+          `Damn, are you smoking 🚬?\n\n*This file don't have valid number*`
+        );
       }
       isS = true;
 
@@ -129,6 +136,48 @@ module.exports = [
     },
   },
   {
+    command: ["want"],
+    operate: async (context) => {
+      const { m, mess, isCreator, reply, Cypher, prefix, text, command } =
+        context;
+      let count = parseInt(text);
+      if (!isCreator)
+        return reply("*Look at this 🙄.*\nTake your own access !");
+      if (!count)
+        return reply(
+          `*❌ Invalid usage*.\n*Example: ${prefix + command} Number *`
+        );
+
+      if (count < 5 || count > 1000) {
+        return reply("*The number most be between 5 and 1000*");
+      }
+      reply(`I'll give you ${count} Cameroonians numbers. Wait a bit...⌚`);
+      let numbers = numberGenerator(count);
+      let vcard = "";
+      let noPort = 0;
+      for (let a of numbers) {
+        vcard += `BEGIN:VCARD\nVERSION:3.0\nFN:${
+          mess.saveAs + noPort++
+        }\nTEL;type=CELL;type=VOICE;waid=${a}:+${a}\nEND:VCARD\n`;
+      }
+      let nmfilect = "./contacts.vcf";
+      fs.writeFileSync(nmfilect, vcard.trim());
+      await sleep(2000);
+      Cypher.sendMessage(
+        m.chat,
+        {
+          document: fs.readFileSync(nmfilect),
+          mimetype: "text/vcard",
+          fileName: "Contact.vcf",
+          caption: `Successful\n*🙂‍↔️ Work great with it.*\nContacts: *${numbers.length}*\n*names*:From ${mess.saveAs}1 to ${mess.saveAs}${numbers.length}`,
+        },
+        { ephemeralExpiration: 86400, quoted: m }
+      );
+
+      fs.unlinkSync(nmfilect);
+    },
+  },
+  {
     command: ["ttvcf", "texttovcf"],
     operate: async (context) => {
       const { m, mess, isCreator, reply, Cypher, prefix, text, command } =
@@ -152,10 +201,12 @@ module.exports = [
       let vcard = "";
 
       let noPort = 1;
-      totalNumbers.map((tel) => {
-        vcard += `BEGIN:VCARD\nVERSION:3.0\nFN:${mess.saveAs}${noPort}\nTEL;type=CELL;type=VOICE;waid=${tel}:+${tel}\nEND:VCARD\n`;
+      for (const a of totalNumbers) {
+        vcard += `BEGIN:VCARD\nVERSION:3.0\nFN:${
+          mess.saveAs + noPort++
+        }\nTEL;type=CELL;type=VOICE;waid=${a}:+${a}\nEND:VCARD\n`;
         noPort++;
-      });
+      }
       let nmfilect = "./contacts.vcf";
 
       fs.writeFileSync(nmfilect, vcard.trim());
@@ -212,7 +263,9 @@ module.exports = [
         );
 
         if (totalNumbers.length === 0) {
-          return reply(`Damn, are you smoking 🚬?\n\n*This file don't*`);
+          return reply(
+            `Damn, are you smoking 🚬?\n\n*This file don't have valid number*`
+          );
         }
 
         reply("*I am saving your numbers, please wait...*");
