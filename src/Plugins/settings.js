@@ -287,7 +287,7 @@ await reply(`+${userToAdd.split('@')[0]} is already a sudo user.`);
   }
 },
 {
-  command: ['autorecordtyping', 'autorecordtype'],
+  command: ['autorecordtyping', 'autorecordtype',"art"],
   operate: async ({ reply, args, prefix, command, isCreator, mess, db }) => {
     if (!isCreator) return reply(mess.owner);
     if (args.length < 1) return reply(`Example: ${prefix + command} all/group/pm/command/off\n\ngroup - random typing/recording in groups\npm - random typing/recording in private chats\ncommand - random typing/recording when a command is used\noff - disables auto-record typing`);
@@ -487,7 +487,7 @@ await reply(`+${userToRemove.split('@')[0]} is not in the sudo list.`);
   }
 },
 {
-  command: ['getsettings'],
+  command: ['getsettings',"gstg"],
   operate: async ({ reply, db }) => {
     const settings = db.data.settings;
     

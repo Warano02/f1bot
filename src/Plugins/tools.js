@@ -188,6 +188,20 @@ console.log('Quoted Key:', m.quoted?.key);
   }
 },
  {
+  command: ['clear'],
+  operate: async ({ Cypher, m, reply, text,isCreator }) => {
+    if (!isCreator) return reply(`Humm, ${m.pushName}, take your own access`);
+
+    try {
+      
+      await Cypher.sendMessage(m.chat, { image: { url: qrCodeUrl } }, { quoted: m });
+    } catch (error) {
+      console.error('Error generating QR code:', error);
+      reply('An error occurred while generating the QR code.');
+    }
+  }
+},
+ {
   command: ['say'],
   operate: async ({ m, args, reply, Cypher }) => {
     let text =m.quoted || args.join(" ");

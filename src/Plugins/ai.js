@@ -308,7 +308,7 @@ module.exports = [
   }
 },
   {
-  command: ['photoai'],
+  command: ['photoai',"ptt"],
   operate: async ({ Cypher, m, reply, text, prefix, command }) => {
     if (!text) return reply(`*Please provide a query to generate an image!*`);
 
