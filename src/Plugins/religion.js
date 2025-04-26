@@ -3,6 +3,7 @@ const fetch = require('node-fetch');
 module.exports = [
  {
   command: ['bible'],
+  desc:"Get chapter in bible",
   operate: async ({ m, text, prefix, command, reply }) => {
     const BASE_URL = "https://bible-api.com";
 
@@ -34,6 +35,7 @@ ${chapterData.text}\n`;
 },
  {
   command: ['quran'],
+  desc:"Get Surat",
   operate: async ({ m, text, Xploader, reply }) => {
     try {
       let surahInput = text.split(" ")[0];

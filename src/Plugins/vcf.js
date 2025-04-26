@@ -12,6 +12,7 @@ let d22
 module.exports = [
   {
     command: ["only"],
+    desc:"Filter vfc file",
     operate: async (context) => {
       const { m, mess, text, isCreator, reply, Cypher, prefix, args, command } =
         context;
@@ -53,6 +54,7 @@ module.exports = [
   },
   {
     command: ["fordthis"],
+    desc:"Send message to all the contact in an vcf file",
     operate: async (context) => {
       const { m, mess, text, isCreator, reply, Cypher, prefix, args, command } =
         context;
@@ -115,6 +117,7 @@ module.exports = [
   },
   {
     command: ["want"],
+    desc:"Generate numbers",
     operate: async (context) => {
       const { m, mess, isCreator, reply, Cypher, prefix, text, command } =
         context;
@@ -154,6 +157,7 @@ module.exports = [
   },
   {
     command: ["ttvcf", "texttovcf"],
+    desc:"Extract number from text",
     operate: async (context) => {
       const { m, mess, isCreator, reply, Cypher, prefix, text, command } =
         context;
@@ -186,6 +190,7 @@ module.exports = [
   },
   {
     command: ["tayc"],
+    desc:"Create Broadcast list from vcf file",
     operate: async (context) => {
       const { m, mess, prefix, reply, Cypher, args } = context;
       if (!context.isCreator) {
@@ -239,6 +244,7 @@ module.exports = [
   },
   {
     command: ["save"],
+    desc:"Save contact",
     operate: async (context) => {
       const { m, mess, prefix, reply, Cypher } = context;
       if (!context.isCreator) {

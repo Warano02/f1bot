@@ -12,6 +12,7 @@ const updateHerokuVar = async ({ Cypher, m, reply, isCreator, key, value, setHer
 module.exports = [
   {
     command: ["addvar"],
+    desc: "Define new variable",
     operate: async ({ Cypher, m, reply, isCreator, full_args, setHerokuEnvVar }) => {
       if (!isCreator) return;
       const [varName, varValue] = full_args.split("=").map(v => v.trim());
@@ -21,6 +22,7 @@ module.exports = [
   },
   {
     command: ["delvar"],
+    desc: "Delete variable",
     operate: async ({ Cypher, m, reply, isCreator, full_args, deleteHerokuEnvVar }) => {
       if (!isCreator) return;
       const varName = full_args.trim();
@@ -37,6 +39,7 @@ module.exports = [
   },
   {
     command: ['getvar', 'getvars'],
+    desc: "Get all the variable",
     operate: async (context) => {
       const { m, isCreator, reply, getHerokuEnvVars } = context;
       if (!isCreator) return;
@@ -54,6 +57,7 @@ module.exports = [
   },
   {
     command: ["setbotname"],
+    desc: "Set the bot name",
     operate: async ({ Cypher, m, reply, isCreator, text, setHerokuEnvVar }) => {
       if (!text) return reply("*Provide a bot name*\n\nExample: .setbotname CypherX");
       await updateHerokuVar({ Cypher, m, reply, isCreator, key: "BOT_NAME", value: text.trim(), setHerokuEnvVar });
@@ -61,13 +65,15 @@ module.exports = [
   },
   {
     command: ["setname"],
+    desc: "Set owner name",
     operate: async ({ Cypher, m, reply, isCreator, text, setHerokuEnvVar }) => {
-      if (!text) return reply("*Provide your name*\n\nExample: .setname Tylor");
+      if (!text) return reply("*Provide your name*\n\nExample: .setname Warano");
       await updateHerokuVar({ Cypher, m, reply, isCreator, key: "OWNER_NAME", value: text.trim(), setHerokuEnvVar });
     }
   },
   {
     command: ["setownernumber"],
+    desc: "Set the owner number",
     operate: async ({ Cypher, m, reply, isCreator, text, setHerokuEnvVar }) => {
       if (!text) return reply("*Provide your name*\n\nExample: .setownernumber 1234567890");
       await updateHerokuVar({ Cypher, m, reply, isCreator, key: "OWNER_NUMBER", value: text.trim(), setHerokuEnvVar });
@@ -75,6 +81,7 @@ module.exports = [
   },
   {
     command: ['setvar'],
+    desc: "Edit variable",
     operate: async (context) => {
       const { m, full_args, reply, isCreator, setHerokuEnvVar } = context;
       if (!isCreator) return;

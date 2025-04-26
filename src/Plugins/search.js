@@ -7,6 +7,7 @@ const yts = require('yt-search');
 module.exports = [
   {
     command: ['define'],
+    desc:"Define Word",
     operate: async ({ Cypher, m, reply, text }) => {
       if (!text) return reply("Enter a word to define.");
       
@@ -27,6 +28,7 @@ module.exports = [
   },
   {
     command: ['define2'],
+    desc:"Define word",
     operate: async ({ m, text, Cypher, reply }) => {
       if (!text) return reply("What do you want to define?");
       
@@ -45,6 +47,7 @@ module.exports = [
   },
   {
     command: ['imdb', 'movie'],
+    desc:"Series details",
     operate: async ({ Cypher, m, reply, text }) => {
       if (!text) return reply("Provide a movie or series name.");
       
@@ -66,6 +69,7 @@ module.exports = [
   },
 {
   command: ['lyrics'],
+  desc:'Song Lyrics',
   operate: async ({ m, text, Cypher, reply }) => {
     if (!text) return reply("Provide a song name.");
     
@@ -87,6 +91,7 @@ module.exports = [
 },
   {
     command: ['shazam', 'find', 'whatmusic'],
+    desc:"shazam a music",
     operate: async ({ m, acr, reply }) => {
  const quoted = m.quoted ? m.quoted : null || m.msg ;
  const mime = quoted?.mimetype || ""; 
@@ -113,6 +118,7 @@ module.exports = [
   },
   {
     command: ['weather'],
+    desc:"Temperature",
     operate: async ({ Cypher, m, reply, text }) => {
       if (!text) return reply("Provide a location.");
 
@@ -134,6 +140,7 @@ module.exports = [
   },
   {
     command: ['yts', 'ytsearch'],
+    desc:"Find videos on YouTube",
     operate: async ({ Cypher, m, reply, text, prefix, command }) => {
       if (!text) return reply(`📌 *Example: ${prefix + command} Eminem Godzilla*`);
 

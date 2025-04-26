@@ -1,6 +1,7 @@
 module.exports = [ 
  {
   command: ["1917style"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -24,6 +25,7 @@ module.exports = [
 },
  {
   command: ["advancedglow"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -70,6 +72,7 @@ module.exports = [
 },
 {
   command: ["blackpinkstyle"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -93,6 +96,7 @@ module.exports = [
 }, 
 {
   command: ["cartoonstyle"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -116,6 +120,7 @@ module.exports = [
 }, 
 {
   command: ["deadpool"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -139,6 +144,7 @@ module.exports = [
 }, 
 {
   command: ["deletingtext"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -162,6 +168,7 @@ module.exports = [
 },
 {
   command: ["dragonball"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -185,6 +192,7 @@ module.exports = [
 },
 {
   command: ["effectclouds"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -208,6 +216,7 @@ module.exports = [
 }, 
 {
   command: ["flag3dtext"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -231,6 +240,7 @@ module.exports = [
 }, 
  {
   command: ["flagtext"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -254,6 +264,7 @@ module.exports = [
 }, 
 {
   command: ["freecreate"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -277,6 +288,7 @@ module.exports = [
 }, 
  {
   command: ["galaxystyle"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -300,6 +312,7 @@ module.exports = [
 }, 
 {
   command: ["galaxywallpaper"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -323,6 +336,7 @@ module.exports = [
 }, 
 {
   command: ["glitchtext"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -346,6 +360,7 @@ module.exports = [
 }, 
 {
   command: ["glowingtext"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -369,6 +384,7 @@ module.exports = [
 },
 {
   command: ["gradienttext"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -415,6 +431,7 @@ module.exports = [
 },
 {
   command: ["incandescent"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -438,6 +455,7 @@ module.exports = [
 },
 {
   command: ["lighteffects"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -461,6 +479,7 @@ module.exports = [
 },
 {
   command: ["logomaker"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -484,6 +503,7 @@ module.exports = [
 },
 {
   command: ["luxurygold"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -507,6 +527,7 @@ module.exports = [
 },
 {
   command: ["makingneon"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -530,6 +551,7 @@ module.exports = [
 },
 {
   command: ["matrix"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -553,6 +575,7 @@ module.exports = [
 },
 {
   command: ["multicoloredneon"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -576,6 +599,7 @@ module.exports = [
 },
 {
   command: ["neonglitch"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -599,6 +623,7 @@ module.exports = [
 },
 {
   command: ["papercutstyle"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -622,6 +647,7 @@ module.exports = [
 },
 {
   command: ["pixelglitch"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -645,6 +671,7 @@ module.exports = [
 },
 {
   command: ["royaltext"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -668,6 +695,7 @@ module.exports = [
 },
 {
   command: ["sand"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -691,6 +719,7 @@ module.exports = [
 },
 {
   command: ["summerbeach"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -714,6 +743,7 @@ module.exports = [
 },
 {
   command: ["topography"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -737,6 +767,7 @@ module.exports = [
 },
 {
   command: ["typography"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -760,6 +791,7 @@ module.exports = [
 },
 {
   command: ["watercolortext"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {
@@ -783,6 +815,7 @@ module.exports = [
 },
 {
   command: ["writetext"],
+  desc:"Text to image style",
   operate: async ({ m, args, reply, Cypher, prefix, mess, ephoto }) => {
     let q = args.join(" ");
     if (!q) {

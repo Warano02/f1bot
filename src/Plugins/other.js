@@ -11,13 +11,14 @@ const botImage = fs.readFileSync("./Media/Images/Xploader5.jpg");
 module.exports = [
   {
     command: ['botstatus', 'statusbot'],
+    desc: "Get bot status ",
     operate: async ({ Cypher, m, reply }) => {
       const used = process.memoryUsage();
       const ramUsage = `${formatSize(used.heapUsed)} / ${formatSize(os.totalmem())}`;
       const freeRam = formatSize(os.freemem());
       const disk = await checkDiskSpace(process.cwd());
       const latencyStart = performance.now();
-      
+
       await reply("⏳ *Calculating ping...*");
       const latencyEnd = performance.now();
       const ping = `${(latencyEnd - latencyStart).toFixed(2)} ms`;
@@ -46,6 +47,7 @@ module.exports = [
   },
   {
     command: ['pair'],
+    desc: "Get the code to connect device",
     operate: async ({ m, text, reply }) => {
       if (!text) return reply('*Provide a phone number*\nExample: .pair 253855856885');
       const number = text.replace(/\+|\s/g, '').trim();
@@ -77,36 +79,38 @@ module.exports = [
     }
   },
   {
-  command: ['ping', 'p'],
-  operate: async ({ m, Cypher }) => {
-    const startTime = performance.now();
+    command: ['ping', 'p'],
+    desc: "Ping Cypher connexion",
+    operate: async ({ m, Cypher }) => {
+      const startTime = performance.now();
 
-    try {
-      const sentMessage = await Cypher.sendMessage(m.chat, {
-        text: "🔸Pong!",
-        contextInfo: { quotedMessage: m.message }
-      });
-      
-      const endTime = performance.now();
-      const latency = `${(endTime - startTime).toFixed(2)} ms`;
-      
-      await Cypher.sendMessage(m.chat, {
-        text: `*🔹 CypherX Speed:* ${latency}`,
-        edit: sentMessage.key, 
-        contextInfo: { quotedMessage: m.message }
-      });
+      try {
+        const sentMessage = await Cypher.sendMessage(m.chat, {
+          text: "🔸Pong!",
+          contextInfo: { quotedMessage: m.message }
+        });
 
-    } catch (error) {
-      console.error('Error sending ping message:', error);
-      await Cypher.sendMessage(m.chat, {
-        text: 'An error occurred while trying to ping.',
-        contextInfo: { quotedMessage: m.message }
-      });
+        const endTime = performance.now();
+        const latency = `${(endTime - startTime).toFixed(2)} ms`;
+
+        await Cypher.sendMessage(m.chat, {
+          text: `*🔹 CypherX Speed:* ${latency}`,
+          edit: sentMessage.key,
+          contextInfo: { quotedMessage: m.message }
+        });
+
+      } catch (error) {
+        console.error('Error sending ping message:', error);
+        await Cypher.sendMessage(m.chat, {
+          text: 'An error occurred while trying to ping.',
+          contextInfo: { quotedMessage: m.message }
+        });
+      }
     }
-  }
-},
+  },
   {
     command: ['runtime', 'uptime'],
+    desc: "Get bot runtime",
     operate: async ({ Cypher, m, reply }) => {
       const botUptime = runtime(process.uptime());
       reply(`*🔹 ${botUptime}*`);

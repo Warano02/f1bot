@@ -13,29 +13,8 @@ const { getDevice } = require('@whiskeysockets/baileys');
 
 module.exports = [
   {
-    command: ['browse'],
-    operate: async ({ m, text, Cypher, reply }) => {
-      if (!text) return reply("Enter URL");
-
-      try {
-        let res = await fetch(text);
-
-        if (res.headers.get('Content-Type').includes('application/json')) {
-          let json = await res.json();
-          await Cypher.sendMessage(m.chat, { text: JSON.stringify(json, null, 2) }, { quoted: m });
-        } else {
-          let resText = await res.text();
-          await Cypher.sendMessage(m.chat, { text: resText }, { quoted: m });
-        }
-
-        if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
-      } catch (error) {
-        reply(`Error fetching URL: ${error.message}`);
-      }
-    }
-  },
-  {
     command: ['emojimix', 'emix'],
+    desc:"Join two emoji",
     operate: async ({ m, text, prefix, command, Cypher, fetchJson, reply }) => {
       let [emoji1, emoji2] = text.split`+`;
 
@@ -71,48 +50,8 @@ module.exports = [
     }
   },
   {
-    command: ['fliptext'],
-    operate: async ({ m, args, prefix, command, reply }) => {
-      if (args.length < 1) return reply(`*Example:\n${prefix}fliptext Tylor*`);
-
-      let flips = args.join(" ");
-      let flipx = flips.split("").reverse().join("");
-
-      reply(`Normal:\n${flips}\n\nFlip:\n${flipx}`);
-    }
-  },
-  {
-    command: ['gsmarena'],
-    operate: async ({ m, reply, text }) => {
-      if (!text) return reply("*Please provide a query to search for smartphones.*");
-
-      try {
-        const apiUrl = `https://api.siputzx.my.id/api/s/gsmarena?query=${encodeURIComponent(text)}`;
-        const response = await fetch(apiUrl);
-        const result = await response.json();
-
-        if (!result.status || !result.data || result.data.length === 0) {
-          return reply("*No results found. Please try another query.*");
-        }
-
-        const limitedResults = result.data.slice(0, 10);
-        let responseMessage = `*Top 10 Results for "${text}":*\n\n`;
-
-        for (let item of limitedResults) {
-          responseMessage += `📱 *Name:* ${item.name}\n`;
-          responseMessage += `📝 *Description:* ${item.description}\n`;
-          responseMessage += `🌐 [View Image](${item.thumbnail})\n\n`;
-        }
-
-        reply(responseMessage);
-      } catch (error) {
-        console.error('Error fetching results from GSMArena API:', error);
-        reply("❌ An error occurred while fetching results from GSMArena.");
-      }
-    }
-  },
-  {
     command: ['genpass', 'genpassword'],
+    desc:"Generate Strong password",
     operate: async ({ Cypher, m, reply, text }) => {
       let length = text ? parseInt(text) : 12;
       let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
@@ -131,6 +70,7 @@ module.exports = [
   },
   {
     command: ['device', 'getdevice'],
+    desc:"Detect  device where message wa send",
     operate: async ({ Cypher, m, reply }) => {
       if (!m.quoted) {
         return reply('*Please quote a message to use this command!*');
@@ -156,6 +96,7 @@ module.exports = [
   },
   {
     command: ['qrcode'],
+    desc:"Generate Qrcode to link",
     operate: async ({ Cypher, m, reply, text }) => {
       if (!text) return reply("Enter text or URL");
 
@@ -172,6 +113,7 @@ module.exports = [
   },
   {
     command: ['repeat','rpt'],
+    desc:'Repeat word a lot of time',
     operate: async ({ Cypher, m, reply, text, isCreator, command, prefix }) => {
       if (!isCreator) return reply(`Hum, ${m.pushName}, take your own access`);
       try {
@@ -244,24 +186,10 @@ module.exports = [
       }
     }
   },
-  {
-    command: ['ssweb', 'screenshot', 'ss'],
-    operate: async ({ Cypher, m, reply, args }) => {
-      const q = args.join(" ");
-      if (!q) return reply(`Please provide a URL to screenshot!`);
 
-      const apiURL = `https://api.siputzx.my.id/api/tools/ssweb?url=${q}&theme=light&device=mobile`;
-
-      try {
-        await Cypher.sendMessage(m.chat, { image: { url: apiURL } }, { quoted: m });
-      } catch (error) {
-        console.error('Error generating screenshot:', error);
-        reply("An error occurred while generating the image.");
-      }
-    }
-  },
   {
     command: ['sticker', 's'],
+    desc:"Transform image to sticker",
     operate: async ({ Cypher, m, reply, args, prefix, command }) => {
 
       const quoted = m.quoted || m.msg?.quoted;
@@ -308,6 +236,7 @@ module.exports = [
   },
   {
     command: ['fancy', 'styletext'],
+    desc:"Fancy text",
     operate: async ({ m, text, Cypher, reply }) => {
 
       if (!text) return reply('*Enter a text!*');
@@ -329,6 +258,7 @@ module.exports = [
   },
   {
     command: ['take', 'wm', 'steal'],
+    desc:"Sticker info",
     operate: async ({ Cypher, m, reply, args, pushname }) => {
       if (!m.quoted) return reply('Please reply to a sticker to add watermark or metadata.');
 
@@ -365,6 +295,7 @@ module.exports = [
   },
   {
     command: ['tinyurl', 'shortlink'],
+    desc:"Short url from long",
     operate: async ({ m, text, prefix, command, reply }) => {
       if (!text) return reply(`*Example: ${prefix + command} https://instagram.com/heyits_tylor*`);
 
@@ -378,38 +309,8 @@ module.exports = [
     }
   },
   {
-    command: ['toimage', 'toimg'],
-    operate: async ({ Cypher, m, reply, args, prefix, command }) => {
-      const quoted = m.quoted || m.msg?.quoted;
-      const mime = quoted?.mimetype || quoted?.msg?.mimetype;
-      if (!quoted || !/webp/.test(mime)) {
-        return reply(`*Send or reply to a sticker with the caption ${prefix + command}*`);
-      }
-
-      try {
-        const media = await quoted.download();
-        const inputPath = path.join(__dirname, getRandom('.webp'));
-        fs.writeFileSync(inputPath, media);
-        const outputPath = path.join(__dirname, getRandom('.png'));
-        exec(`ffmpeg -i ${inputPath} ${outputPath}`, (err) => {
-          fs.unlinkSync(inputPath);
-
-          if (err) {
-            console.error('Error converting to image:', err);
-            return reply('An error occurred while converting the sticker to an image.');
-          }
-          const buffer = fs.readFileSync(outputPath);
-          Cypher.sendMessage(m.chat, { image: buffer }, { quoted: m });
-          fs.unlinkSync(outputPath);
-        });
-      } catch (error) {
-        console.error('Error converting to image:', error);
-        reply('An error occurred while converting the sticker to an image.');
-      }
-    }
-  },
-  {
     command: ['tourl', 'url'],
+    desc:"Image to url",
     operate: async ({ m, Cypher, reply }) => {
       const quoted = m.quoted || m.msg?.quoted;
       const mime = quoted?.mimetype || quoted?.msg?.mimetype;
@@ -429,6 +330,7 @@ module.exports = [
   },
   {
     command: ['translate', 'trt'],
+    desc:"Translate text",
     operate: async ({ m, args, prefix, command, reply }) => {
       const defaultLang = 'en'; // Default language for translation
 
@@ -489,6 +391,7 @@ Ensure you use the correct language code for accurate translation.
   },
   {
     command: ['vcc'],
+    desc:"Generate vcard",
     operate: async ({ m, reply, args }) => {
 
       const apiUrl = `https://api.siputzx.my.id/api/tools/vcc-generator?type=MasterCard&count=5`;

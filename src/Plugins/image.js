@@ -4,8 +4,9 @@ const { wallpaper, wikimedia } = require('../../lib/scraper');
 module.exports = [
   {
     command: ['remini', 'enhance', 'hd'],
+    desc: "Modify image quality",
     operate: async ({ m, prefix, command, Cypher, mess, reply }) => {
-const quoted = m.quoted ? m.quoted : null || m.msg ;
+      const quoted = m.quoted ? m.quoted : null || m.msg;
       const mime = quoted?.mimetype || "";
 
       if (!quoted) return reply("📌 *Send or reply to an image.*");
@@ -25,6 +26,7 @@ const quoted = m.quoted ? m.quoted : null || m.msg ;
   },
   {
     command: ['wallpaper'],
+    desc: "Get wallpaper",
     operate: async ({ m, text, Cypher, reply }) => {
       if (!text) return reply("📌 *Enter a search query.*");
 
@@ -49,6 +51,7 @@ const quoted = m.quoted ? m.quoted : null || m.msg ;
   },
   {
     command: ['wikimedia'],
+    desc: "Search image to wikimedia",
     operate: async ({ m, text, Cypher, reply }) => {
       if (!text) return reply("📌 *Enter a search query.*");
 

