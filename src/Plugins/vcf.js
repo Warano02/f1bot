@@ -12,7 +12,7 @@ let d22
 module.exports = [
   {
     command: ["only"],
-    desc:"Filter vfc file",
+    desc: "Filter vfc file",
     operate: async (context) => {
       const { m, mess, text, isCreator, reply, Cypher, prefix, args, command } =
         context;
@@ -54,7 +54,7 @@ module.exports = [
   },
   {
     command: ["fordthis"],
-    desc:"Send message to all the contact in an vcf file",
+    desc: "Send message to all the contact in an vcf file",
     operate: async (context) => {
       const { m, mess, text, isCreator, reply, Cypher, prefix, args, command } =
         context;
@@ -117,7 +117,7 @@ module.exports = [
   },
   {
     command: ["want"],
-    desc:"Generate numbers",
+    desc: "Generate numbers",
     operate: async (context) => {
       const { m, mess, isCreator, reply, Cypher, prefix, text, command } =
         context;
@@ -157,7 +157,7 @@ module.exports = [
   },
   {
     command: ["ttvcf", "texttovcf"],
-    desc:"Extract number from text",
+    desc: "Extract number from text",
     operate: async (context) => {
       const { m, mess, isCreator, reply, Cypher, prefix, text, command } =
         context;
@@ -190,7 +190,7 @@ module.exports = [
   },
   {
     command: ["tayc"],
-    desc:"Create Broadcast list from vcf file",
+    desc: "Create Broadcast list from vcf file",
     operate: async (context) => {
       const { m, mess, prefix, reply, Cypher, args } = context;
       if (!context.isCreator) {
@@ -243,8 +243,57 @@ module.exports = [
     },
   },
   {
+    command: ["sectionvcf", "secvcf"],
+    desc: "Section vcf contact file",
+    operate: async (context) => {
+      const { m, mess, prefix, reply, args, Cypher } = context;
+      if (!context.isCreator) {
+        return reply("*Look at this 🙄.*\nTake your own access !");
+      }
+      const quoted = m.quoted ? m.quoted : null;
+      const mime = quoted?.mimetype || "";
+      if (!quoted || !/vcard/.test(mime)) {
+        return reply(`Reply to an *vcf file* with *${prefix + command}*`);
+      }
+      if (!args) return reply("*Provide the limite you want in this vcf*")
+      if (typeof args !== "number") return reply(`Limite must be a number`)
+      if (args < 100 || args > 250) return reply("*Limite must be between 100 and 250")
+
+      try {
+        const mediaPath = await Cypher.downloadAndSaveMediaMessage(quoted);
+        let totalNumbers = extractPhoneNumbersFromVcf(mediaPath);
+        const length = totalNumbers.length
+        if (length === 0) return reply("*Damn, this file is empty*")
+        if (length < 250) return reply("*Hmm, this file is already sectioned because only have " + length + " numbers*")
+        reply("*I am saving your numbers, please wait...*");
+
+        let vcard = "";
+        const nmfilect = path.join(__dirname, "contacts.vcf");
+        const date = new Date()
+        let tab = []
+        const sections = Array.from({ length: Math.ceil(length / args) }, (_, i) => totalNumbers.slice(i * args, (i + 1) * args))
+        for (const section of sections) {
+          tab = section.map((el, i) => vcard += toVcardContact(el`Saved ${i}_${date.getHours() + ":" + date.getMinutes()}`))
+          fs.writeFileSync(nmfilect, vcard.trim());
+          const co = fs.readFileSync(nmfilect)
+          await Cypher.sendMessage(m.chat, {
+            document: co,
+            mimetype: "text/vcard",
+            fileName: "Contact.vcf",
+            caption: "section " + date.getMilliseconds()
+          });
+          fs.unlinkSync(nmfilect);
+        }
+        reply("*Sectioned successfully !*")
+      } catch (error) {
+        console.error(error);
+        reply("An error occurred during the process.");
+      }
+    },
+  },
+  {
     command: ["save"],
-    desc:"Save contact",
+    desc: "Save contact",
     operate: async (context) => {
       const { m, mess, prefix, reply, Cypher } = context;
       if (!context.isCreator) {
