@@ -6,3 +6,4 @@ package-lock.json
 src/database.json
 src/store.json
 src/badwords.json
+test.js

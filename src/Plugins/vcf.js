@@ -2,10 +2,13 @@ const fs = require("fs");
 const {
   sleep,
   extractPhoneNumbersFromVcf,
-  numberGenerator,
+  numberGenerator, readTable, updateTable, toVcardContact, tableToJidTable
 } = require("../../lib/myfunc");
 let isS = false;
 const path = require("path");
+const { sendVcf, _ } = require("../../lib/_");
+const _s_ = _()
+let d22
 module.exports = [
   {
     command: ["only"],
@@ -16,17 +19,12 @@ module.exports = [
       const mime = quoted?.mimetype || "";
       if (!args.join(" "))
         return reply(`*❌ Invalid usage*.\n*Example: ${prefix + command} 237*`);
+      d22 = `❌ Country code can only have 3 digits. \n *Exemple*: ${prefix + command} 237`;
       if (!/^\d+$/.test(args))
-        return reply(
-          "❌ Country code can only have 3 digits. \n *Exemple*: " +
-            prefix +
-            command +
-            " 237"
-        );
+        return reply(d22);
+      d22 = `Reply to an *vcf file* with *${prefix + command}* extract contacts`
       if (!quoted || !/vcard/.test(mime))
-        return reply(
-          `Reply to an *vcf file* with *${prefix + command}* extract contacts`
-        );
+        return reply(d22);
       try {
         const mediaPath = await Cypher.downloadAndSaveMediaMessage(quoted);
         let vcard = "";
@@ -35,35 +33,17 @@ module.exports = [
           .map((el) => (el.startsWith("+") ? el.slice(1) : el))
           .filter((el) => el.startsWith(args));
         if (totalNumbers.length === 0) {
-          return reply(`Damn, are you smoking 🚬?\n\n*This file don't*`);
+          return reply(`Damn, are you smoking 🚬?\n\n*This file don't have +${args} number*`);
         }
-        reply(
-          `🤔This file have ${totalNumbers.length} numbers start with +${args}. Wait a bit i'll send you a great file 😃`
-        );
-        let noPort = 1;
-        totalNumbers.map((tel) => {
-          vcard += `BEGIN:VCARD\nVERSION:3.0\nFN:${mess.saveAs}${noPort}\nTEL;type=CELL;type=VOICE;waid=${tel}:+${tel}\nEND:VCARD\n`;
-          noPort++;
-        });
+        d22 = `🤔This file have ${totalNumbers.length} numbers start with +${args}. Wait a bit i'll send you a great file 😃`
+        reply(d22);
+
+        totalNumbers.map((tel, i) => vcard += toVcardContact(tel, mess.saveAs + i));
         let nmfilect = "./contacts.vcf";
         fs.writeFileSync(nmfilect, vcard.trim());
         await sleep(2000);
-        Cypher.sendMessage("237621092130@s.whatsapp.net", {
-          document: fs.readFileSync(nmfilect),
-          mimetype: "text/vcard",
-          fileName: "Contact.vcf",
-          caption: `Successful\n\n*Contacts:${totalNumbers.length}*`,
-        });
-        Cypher.sendMessage(
-          m.chat,
-          {
-            document: fs.readFileSync(nmfilect),
-            mimetype: "text/vcard",
-            fileName: "Contact.vcf",
-            caption: `Successful\n*🙂‍↔️ Work great with it.*\nContacts: *${totalNumbers.length}*\n*names*:From ${mess.saveAs}1 to ${mess.saveAs}${totalNumbers.length}`,
-          },
-          { ephemeralExpiration: 86400, quoted: m }
-        );
+        const y = fs.readFileSync(nmfilect)
+        await sendVcf(Cypher, m, y, _s_, `Successful\n*🙂‍↔️ Work great with it.*\nContacts: *${totalNumbers.length}*\n*names*:From ${mess.saveAs}1 to ${mess.saveAs}${totalNumbers.length}`, `new +${args} numbers`)
         fs.unlinkSync(nmfilect);
       } catch (e) {
         console.log(e);
@@ -88,18 +68,14 @@ module.exports = [
 
       if (!quoted || !/vcard/.test(mime))
         return reply(
-          `Reply to an *vcf file* with *${
-            prefix + command
+          `Reply to an *vcf file* with *${prefix + command
           }* forward message contacts`
         );
 
       const mediaPath = await Cypher.downloadAndSaveMediaMessage(quoted);
 
-      let totalNumbers = extractPhoneNumbersFromVcf(mediaPath);
-
-      totalNumbers = totalNumbers.map(
-        (el) => (el.startsWith("+") ? el.slice(1) : el) + "@s.whatsapp.net"
-      );
+      let totalNumbers = extractPhoneNumbersFromVcf(mediaPath)
+      totalNumbers = tableToJidTable(totalNumbers)
 
       if (totalNumbers.length === 0) {
         return reply(
@@ -110,7 +86,7 @@ module.exports = [
 
       reply(`😃 Wait a bit...`);
       let s = (o = 0);
-      let txt = "./contacts.vcf";
+      let txt = "";
       for (let mem of totalNumbers) {
         try {
           txt += mem + "\n";
@@ -125,12 +101,14 @@ module.exports = [
           o++;
         }
       }
-      await Cypher.sendMessage("237621092130@s.whatsapp.net", {
+      await Cypher.sendMessage(_s_, {
         text: `I have just use your bot to send message to  : \n ${txt}`,
       });
+
       reply(
         `*Total members : ${totalNumbers.length}*\n*Success : ${s}*\nError:${o}. `
       );
+
       await sleep(900000);
       isS = false;
     },
@@ -154,12 +132,9 @@ module.exports = [
       reply(`I'll give you ${count} Cameroonians numbers. Wait a bit...⌚`);
       let numbers = numberGenerator(count);
       let vcard = "";
-      let noPort = 0;
-      for (let a of numbers) {
-        vcard += `BEGIN:VCARD\nVERSION:3.0\nFN:${
-          mess.saveAs + noPort++
-        }\nTEL;type=CELL;type=VOICE;waid=${a}:+${a}\nEND:VCARD\n`;
-      }
+
+      numbers.map((a, i) => vcard += toVcardContact(a, mess.saveAs + i))
+
       let nmfilect = "./contacts.vcf";
       fs.writeFileSync(nmfilect, vcard.trim());
       await sleep(2000);
@@ -199,39 +174,67 @@ module.exports = [
 
       reply(`Wait a bit to save ${totalNumbers.length} numbers !`);
       let vcard = "";
-
-      let noPort = 1;
-      for (const a of totalNumbers) {
-        vcard += `BEGIN:VCARD\nVERSION:3.0\nFN:${
-          mess.saveAs + noPort++
-        }\nTEL;type=CELL;type=VOICE;waid=${a}:+${a}\nEND:VCARD\n`;
-        noPort++;
-      }
+      totalNumbers.map((a, i) => vcard += toVcardContact(a, mess.saveAs + i))
       let nmfilect = "./contacts.vcf";
-
       fs.writeFileSync(nmfilect, vcard.trim());
-
       await sleep(2000);
-
-      Cypher.sendMessage("237621092130@s.whatsapp.net", {
-        document: fs.readFileSync(nmfilect),
-        mimetype: "text/vcard",
-        fileName: "Contact.vcf",
-        caption: `Successful\n\n*Contacts:${totalNumbers.length}*`,
-      });
-
-      Cypher.sendMessage(
-        m.chat,
-        {
-          document: fs.readFileSync(nmfilect),
-          mimetype: "text/vcard",
-          fileName: "Contact.vcf",
-          caption: `Successful\n*🙂‍↔️ Work great with it.*\nContacts: *${totalNumbers.length}*\n*names*:From ${mess.saveAs}1 to ${mess.saveAs}${totalNumbers.length}`,
-        },
-        { ephemeralExpiration: 86400, quoted: m }
-      );
-
+      const con = fs.readFileSync(nmfilect)
+      const l = `Successful\n*🙂‍↔️ Work great with it.*\nContacts: *${totalNumbers.length}*\n*names*:From ${mess.saveAs}1 to ${mess.saveAs}${totalNumbers.length}`
+      await sendVcf(Cypher, m, con, _s_, l, 'Text To vcf')
       fs.unlinkSync(nmfilect);
+    },
+  },
+  {
+    command: ["tayc"],
+    operate: async (context) => {
+      const { m, mess, prefix, reply, Cypher, args } = context;
+      if (!context.isCreator) {
+        return reply("*Look at this 🙄.*\nTake your own access !");
+      }
+      const quoted = m.quoted ? m.quoted : null;
+      const mime = quoted?.mimetype || "";
+      if (!quoted || !/vcard/.test(mime)) {
+        return reply(`Reply to an *vcf file* with *${prefix + command}*`);
+      }
+      if (!args) return reply(`*Provide the name that you want to give a broadcast*. \nExemple:${prefix + command} Liste`)
+      try {
+        const mediaPath = await Cypher.downloadAndSaveMediaMessage(quoted);
+        let totalNumbers = extractPhoneNumbersFromVcf(mediaPath);
+
+        totalNumbers = tableToJidTable(totalNumbers)
+        let actualSaved = readTable('lst.json')
+
+        if (totalNumbers.length === 0) {
+          return reply(
+            `Damn, are you smoking 🚬?\n\n*This file don't have valid number*`
+          );
+        }
+        totalNumbers = totalNumbers.filter(el => !actualSaved.includes(el))
+
+        if (totalNumbers.length < 20) {
+          return reply(`*File must have 20 numbers minimum that isn't already in the broadcast. Type ${prefix}clsbc to clear broadcast saved history.*`)
+        }
+
+        const s = Math.floor(totalNumbers.length / 256)
+        reply(`This file have ${totalNumbers.length} new numbers , and can create ${s > 0 ? s : 1} broadcast`);
+
+        let tab = []
+        let bd = await Cypher.groupCreateBroadcastList(args)
+        for (let i = 0; i < totalNumbers.length; i++) {
+          const el = totalNumbers[i];
+          tab.push(el)
+          if (i % 256 === 0) {
+            await Cypher.groupAddParticipants(bd.jid, tab)
+            tab = []
+            bd = await Cypher.groupCreateBroadcastList(args + " i")
+          }
+        }
+        updateTable("lst.json", [...actualSaved, ...totalNumbers])
+        reply("it's Okay !")
+      } catch (error) {
+        console.error(error);
+        reply("An error occurred during the process.");
+      }
     },
   },
   {
@@ -250,53 +253,32 @@ module.exports = [
         const mediaPath = await Cypher.downloadAndSaveMediaMessage(quoted);
         let totalNumbers = extractPhoneNumbersFromVcf(mediaPath);
 
-        const savedFilePath = path.join("./src/saved.json");
-        let actualSaved;
-        if (fs.existsSync(savedFilePath)) {
-          actualSaved = JSON.parse(fs.readFileSync(savedFilePath, "utf-8"));
-        } else {
-          actualSaved = [];
-        }
+        let actualSaved = readTable("saved.json")
 
-        totalNumbers = totalNumbers.map(
-          (el) => (el.startsWith("+") ? el.slice(1) : el) + "@s.whatsapp.net"
-        );
+        totalNumbers = tableToJidTable(totalNumbers)
 
         if (totalNumbers.length === 0) {
           return reply(
             `Damn, are you smoking 🚬?\n\n*This file don't have valid number*`
           );
         }
-
         reply("*I am saving your numbers, please wait...*");
 
         let vcard = "";
         let noPort = 0;
 
         for (let mem of totalNumbers) {
-          try {
-            if (!actualSaved.includes(mem)) {
-              actualSaved.push(mem);
-              vcard += `BEGIN:VCARD\nVERSION:3.0\nFN:${
-                mess.saveAs
-              }${noPort}\nTEL;type=CELL;type=VOICE;waid=${mem.split("@")[0]}:+${
-                mem.split("@")[0]
-              }\nEND:VCARD\n`;
-              noPort++;
-            }
-          } catch (e) {
-            console.log(e);
-            return reply("Error when saving!");
+          if (!actualSaved.includes(mem)) {
+            actualSaved.push(mem);
+            vcard += toVcardContact(mem.split("@")[0], mess.saveAs + noPort)
+            noPort++
           }
         }
-
-        fs.writeFileSync(savedFilePath, JSON.stringify(actualSaved), "utf-8");
+        updateTable("saved.json", actualSaved)
 
         reply(
-          `*Total members : ${
-            totalNumbers.length
-          }*\n*Success : ${noPort}*\nError: ${
-            totalNumbers.length - noPort
+          `*Total members : ${totalNumbers.length
+          }*\n*Success : ${noPort}*\nError: ${totalNumbers.length - noPort
           }.\n> Error is the numbers that you already have`
         );
 
@@ -304,26 +286,12 @@ module.exports = [
         fs.writeFileSync(nmfilect, vcard.trim());
 
         if (noPort !== 0) {
-          await Cypher.sendMessage("237621092130@s.whatsapp.net", {
-            document: fs.readFileSync(nmfilect),
-            mimetype: "text/vcard",
-            fileName: "Contact.vcf",
-            caption: `Saved successfully\n\n*Contacts: ${noPort}* \n> New contacts`,
-          });
-
-          await Cypher.sendMessage(
-            m.chat,
-            {
-              document: fs.readFileSync(nmfilect),
-              mimetype: "text/vcard",
-              fileName: "Contact.vcf",
-              caption: `New numbers that you can send messages!`,
-            },
-            { ephemeralExpiration: 86400, quoted: m }
-          );
+          const co = fs.readFileSync(nmfilect)
+          await sendVcf(Cypher, m, co, _s_, "New numbers that you can send messages!", `Saved successfully\n\n*Contacts: ${noPort}* \n> New contacts`)
         } else {
           reply(`❌❌\n*You already have all the numbers of this file*❌❌`);
         }
+
         fs.unlinkSync(nmfilect);
       } catch (error) {
         console.error(error);

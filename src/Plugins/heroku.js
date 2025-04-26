@@ -35,23 +35,23 @@ module.exports = [
       }
     }
   },
-   {
+  {
     command: ['getvar', 'getvars'],
     operate: async (context) => {
-        const { m, isCreator, reply, getHerokuEnvVars } = context;
-        if (!isCreator) return;
+      const { m, isCreator, reply, getHerokuEnvVars } = context;
+      if (!isCreator) return;
 
-        try {
-            const envVars = await getHerokuEnvVars();
-            const formattedVars = Object.entries(envVars)
-                .map(([key, value]) => `${key} = ${value}`)
-                .join('\n');
-            await reply(`*Current Environment Variables:*\n\`\`\`${formattedVars}\`\`\``);
-        } catch (error) {
-            await reply(`*Error getting environment variables*\n${error.message}`);
-        }
+      try {
+        const envVars = await getHerokuEnvVars();
+        const formattedVars = Object.entries(envVars)
+          .map(([key, value]) => `${key} = ${value}`)
+          .join('\n');
+        await reply(`*Current Environment Variables:*\n\`\`\`${formattedVars}\`\`\``);
+      } catch (error) {
+        await reply(`*Error getting environment variables*\n${error.message}`);
+      }
     }
-},
+  },
   {
     command: ["setbotname"],
     operate: async ({ Cypher, m, reply, isCreator, text, setHerokuEnvVar }) => {
@@ -59,14 +59,14 @@ module.exports = [
       await updateHerokuVar({ Cypher, m, reply, isCreator, key: "BOT_NAME", value: text.trim(), setHerokuEnvVar });
     }
   },
-    {
+  {
     command: ["setname"],
     operate: async ({ Cypher, m, reply, isCreator, text, setHerokuEnvVar }) => {
       if (!text) return reply("*Provide your name*\n\nExample: .setname Tylor");
       await updateHerokuVar({ Cypher, m, reply, isCreator, key: "OWNER_NAME", value: text.trim(), setHerokuEnvVar });
     }
   },
-    {
+  {
     command: ["setownernumber"],
     operate: async ({ Cypher, m, reply, isCreator, text, setHerokuEnvVar }) => {
       if (!text) return reply("*Provide your name*\n\nExample: .setownernumber 1234567890");
@@ -76,19 +76,19 @@ module.exports = [
   {
     command: ['setvar'],
     operate: async (context) => {
-        const { m, full_args, reply, isCreator, setHerokuEnvVar } = context;
-        if (!isCreator) return;
-        const [varName, varValue] = full_args.split('=');
-        if (!varName || !varValue) {
-            return reply(`*Please provide a variable name and value*\n\nExample: .setvar ANTI_CALL = false`);
-        }
-        try {
-            const result = await setHerokuEnvVar(varName.trim(), varValue.trim());
-            await reply(`*Environment variable set successfully*\n\`\`\`${varName} = ${varValue}\`\`\``);
-            await reply(`*Bot will restart to apply the new environment variable. Please wait a moment!*`);
-        } catch (error) {
-            await reply(`*Error setting environment variable*\n${error.message}`);
-        }
+      const { m, full_args, reply, isCreator, setHerokuEnvVar } = context;
+      if (!isCreator) return;
+      const [varName, varValue] = full_args.split('=');
+      if (!varName || !varValue) {
+        return reply(`*Please provide a variable name and value*\n\nExample: .setvar ANTI_CALL = false`);
+      }
+      try {
+        const result = await setHerokuEnvVar(varName.trim(), varValue.trim());
+        await reply(`*Environment variable set successfully*\n\`\`\`${varName} = ${varValue}\`\`\``);
+        await reply(`*Bot will restart to apply the new environment variable. Please wait a moment!*`);
+      } catch (error) {
+        await reply(`*Error setting environment variable*\n${error.message}`);
+      }
     }
-},
+  },
 ];
