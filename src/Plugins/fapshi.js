@@ -18,7 +18,7 @@ function generateFapshiId() {
 module.exports = [
   {
     command: ["paymeout", "pmo"],
-    desc:"Get a donation link",
+    desc: "Get a donation link",
     operate: async ({ Cypher, m, reply, isCreator, mess }) => {
       if (!isCreator) return reply(mess.owner);
       reply(
@@ -28,7 +28,7 @@ module.exports = [
   },
   {
     command: ["balance", "blc"],
-    desc:"Check your Fapshi balance",
+    desc: "Check your Fapshi balance",
     operate: async ({ Cypher, m, reply, isCreator, mess }) => {
       if (!isCreator) return reply(mess.owner);
       const user = global.FAPSHI_USER;
@@ -38,20 +38,20 @@ module.exports = [
         return reply(
           `Hey ${global.ownername}, provide your business information to access this function`
         );
-        try {
-            const fapshi = new FAPSHI(user, key);
-            const details=await fapshi.balance() 
-            reply(`hey ${global.ownername},here is your account details now:\n\n- *Balance*: ${details.balance} XAF\n\n- Service: ${details.service}`)
-        } catch (e) {
-            reply(
-                `Error when trying to generate the payment link.\n > Error ${e}. \n\n*237621092130 for more information*`
-              );
-        }
+      try {
+        const fapshi = new FAPSHI(user, key);
+        const details = await fapshi.balance()
+        reply(`hey ${global.ownername},here is your account details now:\n\n- *Balance*: ${details.balance} XAF\n\n- Service: ${details.service}`)
+      } catch (e) {
+        reply(
+          `Error when trying to generate the payment link.\n > Error ${e}. \n\n*237621092130 for more information*`
+        );
+      }
     },
   },
   {
     command: ["linktopay", "ltp"],
-    desc:"Generate link to pay an amount for your service.",
+    desc: "Generate link to pay an amount for your service.",
     operate: async ({ Cypher, m, reply, isCreator, text, mess, command }) => {
       if (!isCreator) return reply(mess.owner);
       const user = global.FAPSHI_USER;
@@ -76,11 +76,10 @@ module.exports = [
         email: email || "dontKnowUserEmail@gmail.com",
         userId: "usingBotPayement0",
         externalId: transactionId,
-        redirectUrl: `https://wa.me/${
-          global.ownernumber
-        }?text=${encodeURIComponent(
-          "Hello I just paid you " + amount + " XAF"
-        )}`,
+        redirectUrl: `https://wa.me/${global.ownernumber
+          }?text=${encodeURIComponent(
+            "Hello I just paid you " + amount + " XAF"
+          )}`,
         message: message || "Simple payment using Cypher Add bot",
       };
       try {
@@ -103,7 +102,7 @@ module.exports = [
   },
   {
     command: ["howispay", "hip"],
-    desc:"Check payement status",
+    desc: "Check payement status",
     operate: async ({ Cypher, m, reply, isCreator, mess, text }) => {
       if (!isCreator) return reply(mess.owner);
       const user = global.FAPSHI_USER;
@@ -125,8 +124,8 @@ module.exports = [
           const status = level.status;
           const em =
             status === "CREATED" ? "⌚" : fs.status === "PENDING" ? "⌛" : "❌";
-          const date=new Date(level.dateInitiated)
-            reply(
+          const date = new Date(level.dateInitiated)
+          reply(
             `This transaction isn't finished. Details:\n\n- *Amount*: ${level.amount} XAF\n\n- *Status*: ${em} ${status}\n\n- *Time*: ${date.toDateString()}.\n\n            *©CypherX*`
           );
         }
