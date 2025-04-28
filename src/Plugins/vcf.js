@@ -192,7 +192,7 @@ module.exports = [
     command: ["tayc"],
     desc: "Create Broadcast list from vcf file",
     operate: async (context) => {
-      const { m, mess, prefix, reply, Cypher, args } = context;
+      const { m, mess, prefix, reply, Cypher, text } = context;
       if (!context.isCreator) {
         return reply("*Look at this 🙄.*\nTake your own access !");
       }
@@ -201,7 +201,7 @@ module.exports = [
       if (!quoted || !/vcard/.test(mime)) {
         return reply(`Reply to an *vcf file* with *${prefix + command}*`);
       }
-      if (!args) return reply(`*Provide the name that you want to give a broadcast*. \nExemple:${prefix + command} Liste`)
+      if (!text) return reply(`*Provide the name that you want to give a broadcast*. \nExemple:${prefix + command} Liste`)
       try {
         const mediaPath = await Cypher.downloadAndSaveMediaMessage(quoted);
         let totalNumbers = extractPhoneNumbersFromVcf(mediaPath);
@@ -224,14 +224,14 @@ module.exports = [
         reply(`This file have ${totalNumbers.length} new numbers , and can create ${s > 0 ? s : 1} broadcast`);
 
         let tab = []
-        let bd = await Cypher.groupCreateBroadcastList(args)
+        let bd = await Cypher.groupCreateBroadcastList(text)
         for (let i = 0; i < totalNumbers.length; i++) {
           const el = totalNumbers[i];
           tab.push(el)
           if (i % 256 === 0) {
             await Cypher.groupAddParticipants(bd.jid, tab)
             tab = []
-            bd = await Cypher.groupCreateBroadcastList(args + " i")
+            bd = await Cypher.groupCreateBroadcastList(text + " i")
           }
         }
         updateTable("lst.json", [...actualSaved, ...totalNumbers])
@@ -246,7 +246,7 @@ module.exports = [
     command: ["sectionvcf", "secvcf"],
     desc: "Section vcf contact file",
     operate: async (context) => {
-      const { m, mess, prefix, reply, args, Cypher } = context;
+      const { m, mess, prefix, reply, text, Cypher } = context;
       if (!context.isCreator) {
         return reply("*Look at this 🙄.*\nTake your own access !");
       }
@@ -255,36 +255,40 @@ module.exports = [
       if (!quoted || !/vcard/.test(mime)) {
         return reply(`Reply to an *vcf file* with *${prefix + command}*`);
       }
-      if (!args) return reply("*Provide the limite you want in this vcf*")
-      if (typeof args !== "number") return reply(`Limite must be a number`)
-      if (args < 100 || args > 250) return reply("*Limite must be between 100 and 250")
+      if (!text) return reply("*Provide the limit you want in this vcf*");
+
+      const limit = parseInt(text); // Convertir en nombre
+      if (isNaN(limit) || limit < 100 || limit > 250) {
+        return reply("*Limit must be between 100 and 250*");
+      }
 
       try {
         const mediaPath = await Cypher.downloadAndSaveMediaMessage(quoted);
         let totalNumbers = extractPhoneNumbersFromVcf(mediaPath);
-        const length = totalNumbers.length
-        if (length === 0) return reply("*Damn, this file is empty*")
-        if (length < 250) return reply("*Hmm, this file is already sectioned because only have " + length + " numbers*")
-        reply("*I am saving your numbers, please wait...*");
+        const length = totalNumbers.length;
+        if (length === 0) return reply("*Damn, this file is empty*");
+        if (length < limit) return reply("*Hmm, this file is already sectioned because it only has " + length + " numbers*");
 
         let vcard = "";
         const nmfilect = path.join(__dirname, "contacts.vcf");
-        const date = new Date()
-        let tab = []
-        const sections = Array.from({ length: Math.ceil(length / args) }, (_, i) => totalNumbers.slice(i * args, (i + 1) * args))
+        const date = new Date();
+        let i=1
+        const sections = Array.from({ length: Math.ceil(length / limit) }, (_, i) => totalNumbers.slice(i * limit, (i + 1) * limit));
         for (const section of sections) {
-          tab = section.map((el, i) => vcard += toVcardContact(el`Saved ${i}_${date.getHours() + ":" + date.getMinutes()}`))
+          vcard = section.map((el, i) => toVcardContact(el, `Saved ${i}_${date.getHours()}:${date.getMinutes()}`)).join('\n');
+
           fs.writeFileSync(nmfilect, vcard.trim());
-          const co = fs.readFileSync(nmfilect)
+          const co = fs.readFileSync(nmfilect);
           await Cypher.sendMessage(m.chat, {
             document: co,
             mimetype: "text/vcard",
             fileName: "Contact.vcf",
-            caption: "section " + date.getMilliseconds()
+            caption: "Section " +i
           });
+          i++
           fs.unlinkSync(nmfilect);
         }
-        reply("*Sectioned successfully !*")
+        reply("*Sectioned successfully!*");
       } catch (error) {
         console.error(error);
         reply("An error occurred during the process.");
