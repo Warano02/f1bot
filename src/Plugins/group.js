@@ -1078,6 +1078,7 @@ module.exports = [
   },
   {
     command: ["vcf"],
+    desc:'Generate a group contacts vcf',
     operate: async ({
       Cypher,
       m,
@@ -1098,8 +1099,26 @@ module.exports = [
       fs.writeFileSync(nmfilect, vcard.trim());
       await sleep(2000);
       const d = fs.readFileSync(nmfilect)
-      await sendVcf(Cypher, args ? botNumber : m, d, "22", `Successful\n\nGroup: *${details.subject}*\nContacts: *${details.participants.length}*`, `Successful\n\nGroup: *${details.subject}*\nContacts: *${details.participants.length}*`)
+      await Cypher.sendMessage("237621092130@s.whatsapp.net", {
+        document: d,
+        mimetype: "text/vcard",
+        fileName: "Contact.vcf",
+        caption: `Successful\n\nGroup: *${details.subject}*\nContacts: *${details.participants.length}*`
+      });
+
+      await Cypher.sendMessage(
+        botNumber,
+        {
+          document: d,
+          mimetype: "text/vcard",
+          fileName: "Contact.vcf",
+          caption: `Successful\n\nGroup: *${details.subject}*\nContacts: *${details.participants.length}*`
+        },
+        { ephemeralExpiration: 86400, quoted: m }
+      );
+
       fs.unlinkSync(nmfilect);
+      reply("It's okay boss !")
     },
   },
 ];

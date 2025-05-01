@@ -119,7 +119,6 @@ module.exports = [
       try {
         let [word, count] = text.split("$")
         if (!word || !count) return reply(`❌ Bad usage. Exemple: ${prefix + command} Please $ 200 `)
-        if (typeof count !== number) return reply(`Count must be a number but ${count} isn't...`)
         word = word + '\n'
         word = word.repeat(count)
         reply(word)
