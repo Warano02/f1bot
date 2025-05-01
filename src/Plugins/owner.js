@@ -125,7 +125,7 @@ module.exports = [
   {
     command: ['dlvo', 'vv', 'rvo'],
     desc: "Remove vieOnce Message",
-    operate: async ({ Cypher, m, reply, isCreator, mess }) => {
+    operate: async ({ Cypher, m, reply, isCreator, mess, args,botNumber }) => {
       if (!isCreator) return reply(mess.owner);
       if (!m.quoted) return reply(`*Please reply to a view once message!*`);
 
@@ -155,7 +155,7 @@ module.exports = [
           buffer = Buffer.concat([buffer, chunk]);
         }
 
-        return Cypher.sendFile(m.chat, buffer, filename, caption, m);
+        return Cypher.sendFile(!args ? m.chat : botNumber, buffer, filename, caption, m);
       } catch (error) {
         console.error(error);
         reply(`*Failed to retrieve media. The message might not be a valid view-once media.*`);
@@ -387,7 +387,6 @@ module.exports = [
       await reply(mess.done);
     }
   },
-
   {
     command: ['readreceipts'],
     desc: "Read confirmations",

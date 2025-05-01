@@ -313,7 +313,8 @@ module.exports = [
         let totalNumbers = extractPhoneNumbersFromVcf(mediaPath);
 
         let actualSaved = readTable("saved.json")
-
+ console.log(actualSaved);
+ 
         totalNumbers = tableToJidTable(totalNumbers)
 
         if (totalNumbers.length === 0) {
