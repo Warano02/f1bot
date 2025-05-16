@@ -21,6 +21,7 @@
     "chalk": "^4.1.2",
     "check-disk-space": "^3.3.1",
     "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^16.5.0",
     "express": "^4.19.2",
     "fapshi": "^1.0.3",
     "figlet": "^1.7.0",
